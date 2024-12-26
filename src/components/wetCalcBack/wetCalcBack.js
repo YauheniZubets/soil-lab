@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {useForm} from 'react-hook-form';
+import wetReducer from '../../redux/wetReducer';
 
 
 export const WetCalcBack = (props) => {
 
     const {wetData} = props;
+    const dataMass = useSelector(state=>state.wetDataMass);
 
     const randomIntFromInterval = (min, max) => { // min and max included 
         return (Math.random() * (max - min + 1) + min).toFixed(2);
