@@ -11,7 +11,7 @@ import './estimate.css';
 
 export const Estimate = (props) => {
     const {header, quantity, code} = props;
-    const codeFromRed = useSelector(state => state.code);
+    const codeFromRed = useSelector(state=>state.code);
     const dateFromRed = useSelector(state=>state.dateWorking);
     const [isExistObj, setIsExist] = useState(false);
 
@@ -37,6 +37,8 @@ export const Estimate = (props) => {
     const sum2017 = (sum * computerTech * factors2017).toFixed(2);
     const sumRes = (sum2017 * factorsCurrent * factorsMonth).toFixed(2);
     const currentDate = new Date();
+    const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
+
     
 
     const writeSumInFire = async () => {
@@ -51,7 +53,7 @@ export const Estimate = (props) => {
         //     console.error("Error adding document: ", e);
         // }
         try {
-            const docRef = await setDoc(doc(db, "works", String(currentDate.getFullYear())), {
+            const docRef = await setDoc(doc(db, "works", String(dateNormalized.getFullYear())), {
               code: codeFromRed.code,
               date: ExcelDateToJSDate(dateFromRed.dateWorking),
               sum: sumRes

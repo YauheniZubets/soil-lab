@@ -6,6 +6,7 @@ export const ExportXLSX = (props) => {
     const cod = useSelector(state=>state.code);
     const dateWorking = useSelector(state=>state.dateWorking);
     const mainData = useSelector(state=>state.mainData.mainData); //все образцы
+    const wetsData = useSelector(state=>state.wetDataMass);
 
     function ExcelDateToJSDate(serial) { //перевод даты
       var utc_days  = Math.floor(serial - 25569);
@@ -312,8 +313,10 @@ export const ExportXLSX = (props) => {
 
       const wetData = mainData.filter(item => { // фильтр только на влажность
         return item[8] === '+';
-      })
-       
+      });
+      
+      const colD = worksheet.getColumn('D');
+
       const rows1 = wetData.map((item, index) => { //скважины и глубины
         return [item[0], `${item[1]}-${item[2]}${item[3]}`, `${item[4]}-${item[5]}`]
       })

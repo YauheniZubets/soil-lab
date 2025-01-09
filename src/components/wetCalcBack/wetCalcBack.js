@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {useForm} from 'react-hook-form';
-import wetReducer from '../../redux/wetReducer';
+import { setWetDataMass } from '../../redux/wetReducer';
 
 
 export const WetCalcBack = (props) => {
 
     const {wetData} = props;
     const dataMass = useSelector(state=>state.wetDataMass);
+    console.log('dataMass: ', dataMass);
+    const dispatch = useDispatch();
 
     const randomIntFromInterval = (min, max) => { // min and max included 
         return (Math.random() * (max - min + 1) + min).toFixed(2);
@@ -60,14 +62,22 @@ export const WetCalcBack = (props) => {
     const wetBux = wetResBack.map((item, index) => {
         return <div key={index}>{item ? item : '-'}</div>
     });
-    console.log(wetResBack);
+    // console.log(wetResBack);
 
     const cbKeyDown = (e) => {
         const targ = e.target;
         const r = targ.parentElement;
         // console.log('r: ', r);
         // console.log('targ: ', targ);
-    }
+    };
+
+    const cbSave = () => {
+        let arrRes = [];
+        if (emptyBuxArr.length && dryBuxArr.length) {
+            arrRes.push(emptyBuxArr, dryBuxArr, wetResBack);
+            dispatch(setWetDataMass(arrRes));
+        } 
+    } 
 
     return (
         <div className='wet-calc-view' onKeyDown={cbKeyDown}>
@@ -82,6 +92,7 @@ export const WetCalcBack = (props) => {
             </div>
             <div>Влажный бюкс</div>
             <div className='wet-bux'>{wetBux}</div>
+            <button onClick={cbSave}>Сохранить</button>
         </div>
     )
 }
