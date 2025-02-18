@@ -5,6 +5,7 @@ import './App.css';
 import { indicators } from './base-data/base-data';
 import { useSelector, useDispatch } from 'react-redux';
 import { setNewCode } from './redux/reducer';
+import { setNewProtocol } from './redux/protocolReducer';
 import { setDateWorking } from './redux/dateReducer';
 import { setMainData } from './redux/mainDataReducer';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,6 @@ const [quantity, setQuantity] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 const [prices, setPrices] = useState([100, 200, 100, 200, 100, 200, 100, 200, 100, 200]);
 
 const dispatch = useDispatch();
-
 
 function number_rows( main_rows) {
   return main_rows.filter(el => Number.isInteger(el[0] && el[1]))
@@ -61,6 +61,8 @@ function sortAllStatment (allNumbes) {
 
 const cbLoad = e => {
   const file = e.target.files[0];
+  const protocolName = parseInt(file.name.split(' ')[0]); //получаем номер протокола в формате ХХХ
+  dispatch(setNewProtocol(protocolName));
   const reader = new FileReader();
   reader.readAsArrayBuffer(file);
     reader.onload = async (e) => {
@@ -101,7 +103,7 @@ const cbLoad = e => {
         </div>
       )} */}
       <div>
-        <Estimate header={headers} quantity={quantity} code={code} />
+        <Estimate header={headers} quantity={quantity} code={code}  />
       </div>
     </div>
   );

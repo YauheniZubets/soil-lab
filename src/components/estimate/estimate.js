@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ExportXLSX } from "../exportXLSX/exportXLSC";
-import { indicators } from "../../base-data/base-data";
+import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { price, factors2017, factorsCurrent, factorsMonth, computerTech } from "../../base-data/price";
 import { useSelector } from "react-redux";
 import { db } from "../firebase/init";
@@ -12,6 +12,7 @@ import './estimate.css';
 export const Estimate = (props) => {
     const {header, quantity, code} = props;
     const codeFromRed = useSelector(state=>state.code);
+    const protocolFromRed = useSelector(state=>state.protocol);
     const dateFromRed = useSelector(state=>state.dateWorking);
     const [isExistObj, setIsExist] = useState(false);
 
@@ -53,10 +54,11 @@ export const Estimate = (props) => {
         //     console.error("Error adding document: ", e);
         // }
         try {
-            const docRef = await setDoc(doc(db, "works", String(dateNormalized.getFullYear())), {
-              code: codeFromRed.code,
-              date: ExcelDateToJSDate(dateFromRed.dateWorking),
-              sum: sumRes
+            const docRef = await setDoc(doc(db, "works", String(protocolFromRed.protocol)), {
+                protocol: protocolFromRed.protocol,
+                code: codeFromRed.code,
+                date: ExcelDateToJSDate(dateFromRed.dateWorking),
+                sum: sumRes
             });
             alert('Записано успешно');
         } catch (e) {
@@ -65,7 +67,7 @@ export const Estimate = (props) => {
     };
 
     const getSumIfExist = async () => {
-        const docRef = doc(db, "works", String(currentDate.getFullYear()));
+        const docRef = doc(db, "works", String(protocolFromRed.protocol));
         const docSnap = await getDoc(docRef);
         const resCode = await docSnap.data()?.code;
         if (resCode === codeFromRed.code) {
@@ -122,6 +124,7 @@ export const Estimate = (props) => {
                 header.length > 0 &&
                 <div>
                     <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={code}/>
+                    <ComplexEstimate />
                     <Link to={`/wet-calc`}>Рассчитать влажность</Link>
                 </div>
             }
