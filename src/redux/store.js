@@ -4,6 +4,9 @@ import protocolReducer from './protocolReducer';
 import dateReducer from './dateReducer';
 import mainDataReducer from './mainDataReducer';
 import wetReducer from './wetReducer';
+import kbDataReducer from './kbDataReducer';
+import kstDataReducer from './kstDataReducer';
+import waterDataReducer from './waterDataReducer';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +14,9 @@ export const store = configureStore({
     protocol: protocolReducer,
     dateWorking: dateReducer,
     mainData: mainDataReducer,
-    wetDataMass: wetReducer
+    wetDataMass: wetReducer,
+    kbData: kbDataReducer,
+    kstData: kstDataReducer,
+    waterData: waterDataReducer
   },
 })

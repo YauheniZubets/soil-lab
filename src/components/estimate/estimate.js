@@ -14,7 +14,13 @@ export const Estimate = (props) => {
     const codeFromRed = useSelector(state=>state.code);
     const protocolFromRed = useSelector(state=>state.protocol);
     const dateFromRed = useSelector(state=>state.dateWorking);
+    const kbData = useSelector(state=>state.kbData);
+    const kstData = useSelector(state=>state.kstData);
+    const waterData = useSelector(state=>state.waterData);
     const [isExistObj, setIsExist] = useState(false);
+    const kbPrice = 95000;
+    const kstPrice = 30000;
+    const waterPrice = 105000;
 
     const head = header.map((headIndi, index) => {
         return <td key={index}>{headIndi}</td>
@@ -94,20 +100,32 @@ export const Estimate = (props) => {
                     <tr>
                         <td/>
                         {head}
+                        <td>КБ</td>
+                        <td>КСТ</td>
+                        <td>Вода</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Количество</td>
                         {quanList}
+                        <td>{kbData.kbData?.length}</td>
+                        <td>{kstData.kstData?.length}</td>
+                        <td>{waterData.waterData?.length}</td>
                     </tr>
                     <tr>
                         <td>Цена за ед.</td>
                         {priceList}
+                        <td>{kbPrice}</td>
+                        <td>{kstPrice}</td>
+                        <td>{waterPrice}</td>
                     </tr>
                     <tr>
                         <td>Сумма</td>
                         {summary}
+                        <td>{kbData.kbData?.length * kbPrice}</td>
+                        <td>{kstData.kstData?.length * kstPrice}</td>
+                        <td>{waterData.waterData?.length * waterPrice}</td>
                     </tr>
                     <tr>
                         <td>Итого с учетом коэффициентов на январь 2017</td>

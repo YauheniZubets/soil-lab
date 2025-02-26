@@ -8,6 +8,9 @@ import { setNewCode } from './redux/reducer';
 import { setNewProtocol } from './redux/protocolReducer';
 import { setDateWorking } from './redux/dateReducer';
 import { setMainData } from './redux/mainDataReducer';
+import { setKbData } from './redux/kbDataReducer';
+import { setKstData } from './redux/kstDataReducer';
+import { setWaterData } from './redux/waterDataReducer';
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -87,6 +90,27 @@ const cbLoad = e => {
       // sortAll(usefulNumbers, indicators);
       sortAllStatment(usefulNumbers); //добавляем в массив количества всех показателей
       // const htmlData = XLSX.utils.sheet_to_html(sheet);
+      
+      const sheetName1 = workbook.SheetNames[1];
+      const sheet1 = workbook.Sheets[sheetName1];
+      const sheetData1 = XLSX.utils.sheet_to_json(sheet1, {header: 1});
+      const main_rows1 = sheetData1.slice(8);
+      const usefulNumbers1 = number_rows(main_rows1);
+      dispatch(setKbData([...usefulNumbers1])); //инфо с листа кор к бет
+
+      const sheetName2 = workbook.SheetNames[2];
+      const sheet2 = workbook.Sheets[sheetName2];
+      const sheetData2 = XLSX.utils.sheet_to_json(sheet2, {header: 1});
+      const main_rows2 = sheetData2.slice(8);
+      const usefulNumbers2 = number_rows(main_rows2);
+      dispatch(setKstData([...usefulNumbers2])); //инфо с листа кор к стали
+
+      const sheetName3 = workbook.SheetNames[3];
+      const sheet3 = workbook.Sheets[sheetName3];
+      const sheetData3 = XLSX.utils.sheet_to_json(sheet3, {header: 1});
+      const main_rows3 = sheetData3.slice(7);
+      const usefulNumbers3 = number_rows(main_rows3);
+      dispatch(setWaterData([...usefulNumbers3])); //инфо с листа вода
     };
 }
 
