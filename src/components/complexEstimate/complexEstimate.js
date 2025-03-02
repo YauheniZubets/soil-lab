@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as ExcelJS from 'exceljs';
 import { db } from "../firebase/init";
-import { collection, doc, setDoc, getDocs, query } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, query, Timestamp } from "firebase/firestore";
 
 export const ComplexEstimate = (props) => {
 
@@ -11,10 +11,6 @@ export const ComplexEstimate = (props) => {
     },[]);
 
     const cbSave = (e) => {
-      let protocols = [];
-      let codes = [];
-      let sums = [];
-      let dates = [];
       let allArr = [];
 
       const saveFullEstFromFire = async () => {
@@ -23,9 +19,9 @@ export const ComplexEstimate = (props) => {
         
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const arrData = [data?.protocol, data?.code, data?.date.seconds, data?.sum];
+          const date = new Date(data?.date.seconds * 1000);
+          const arrData = [data?.protocol, data?.code, date, data?.sum];
           allArr.push(arrData);
-          console.log(doc.id, " => ", doc.data());
         });
 
         downloadExcel();
@@ -63,8 +59,6 @@ export const ComplexEstimate = (props) => {
 
       saveFullEstFromFire();
 
-
-      
     };
 
     return(

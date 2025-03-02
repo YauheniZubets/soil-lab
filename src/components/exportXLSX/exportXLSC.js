@@ -21,37 +21,37 @@ export const ExportXLSX = (props) => {
       return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
     }
 
-    const cbSave = (e) => {
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('My Sheet', {
-          properties:{
-            tabColor:{argb:'yellow'},
-          },
-          pageSetup:{paperSize: 9, orientation:'portrait'},
-        });
-        worksheet.columns = [
-          { header: 'Шифр объекта', key: 'id', width: 30},
-          { header: 'Дата ведомости', key: 'date', width: 25},
-          { header: 'Стоимость', key: 'price', width: 32 },
-        ];
-        const row = worksheet.getRow(2);
-        row.getCell(1).value = cod.code;
-        row.getCell(2).value = new Date(ExcelDateToJSDate(dateWorking.dateWorking));
-        row.getCell(3).value = sumRes;
+    // const cbSave = (e) => {
+    //     const workbook = new ExcelJS.Workbook();
+    //     const worksheet = workbook.addWorksheet('My Sheet', {
+    //       properties:{
+    //         tabColor:{argb:'yellow'},
+    //       },
+    //       pageSetup:{paperSize: 9, orientation:'portrait'},
+    //     });
+    //     worksheet.columns = [
+    //       { header: 'Шифр объекта', key: 'id', width: 30},
+    //       { header: 'Дата ведомости', key: 'date', width: 25},
+    //       { header: 'Стоимость', key: 'price', width: 32 },
+    //     ];
+    //     const row = worksheet.getRow(2);
+    //     row.getCell(1).value = cod.code;
+    //     row.getCell(2).value = new Date(ExcelDateToJSDate(dateWorking.dateWorking));
+    //     row.getCell(3).value = sumRes;
         
-        // для скачивания
-        workbook.xlsx.writeBuffer().then(data => {
-          const blob = new Blob([data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheet.sheet",
-          });
-          const url = window.URL.createObjectURL(blob);
-          const anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = 'download.xlsx';
-          anchor.click();
-          window.URL.revokeObjectURL(url);
-        });
-    };
+    //     // для скачивания
+    //     workbook.xlsx.writeBuffer().then(data => {
+    //       const blob = new Blob([data], {
+    //         type: "application/vnd.openxmlformats-officedocument.spreadsheet.sheet",
+    //       });
+    //       const url = window.URL.createObjectURL(blob);
+    //       const anchor = document.createElement('a');
+    //       anchor.href = url;
+    //       anchor.download = 'download.xlsx';
+    //       anchor.click();
+    //       window.URL.revokeObjectURL(url);
+    //     });
+    // };
 
     const cbJornal = () => {
       const workbook = new ExcelJS.Workbook();
@@ -338,7 +338,7 @@ export const ExportXLSX = (props) => {
 
     return (
             <div>
-              <input type="button" onClick={cbSave} value="Скачать в Excel"/>
+              {/* <input type="button" onClick={cbSave} value="Скачать в Excel"/> */}
               <input type="button" onClick={cbJornal} value="Журнал влажности"/>
             </div>
     )

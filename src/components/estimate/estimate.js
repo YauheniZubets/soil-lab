@@ -41,24 +41,21 @@ export const Estimate = (props) => {
         return <td key={index}>{price.price * quantity[index]}</td>
     });
 
+    const summaryKbKstW = (strt) => {
+        strt += kbPrice * kbData.kbData?.length;
+        strt += kstPrice * kstData.kstData?.length;
+        strt += waterPrice * waterData.waterData?.length;
+        return strt;
+    };
+
+    sum += summaryKbKstW(0); //грунты + кб + кст + вода
+
     const sum2017 = (sum * computerTech * factors2017).toFixed(2);
     const sumRes = (sum2017 * factorsCurrent * factorsMonth).toFixed(2);
     const currentDate = new Date();
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
 
-    
-
     const writeSumInFire = async () => {
-        // try {
-        //     const docRef = await addDoc(collection(db, "prices"), {
-        //       code: codeFromRed.code,
-        //       date: new Date(dateFromRed.dateWorking),
-        //       sum: sumRes
-        //     });
-        //     console.log("Document written with ID: ", docRef.id);
-        // } catch (e) {
-        //     console.error("Error adding document: ", e);
-        // }
         try {
             const docRef = await setDoc(doc(db, "works", String(protocolFromRed.protocol)), {
                 protocol: protocolFromRed.protocol,
