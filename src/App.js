@@ -120,12 +120,6 @@ const cbLoad = e => {
       {__html && (
         <div dangerouslySetInnerHTML={{__html}}/>
       )}
-      {/* {data && (
-        <div>
-          <h2>Imported Data:</h2>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
-        </div>
-      )} */}
       <div>
         <Estimate header={headers} quantity={quantity} code={code}  />
       </div>

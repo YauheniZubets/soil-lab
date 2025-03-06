@@ -1,7 +1,9 @@
 export const computerTech = 1.2;
 export const factors2017 = 0.00013164 * 1.09140;
 export const factorsCurrent = 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069;
-export const factorsMonth = 1.0230;
+export const factorsMonth2024 = 1.1402;
+export const factorsMonth2025 = [1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105, 1.0105];
+export const factorsMonth2026 = [1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101];
 export const price = [
     {
         name: 'грансостав',

@@ -1,6 +1,15 @@
 .estimate-table {
-    border: 3px solid;
+    border: 2px solid;
+    width: 90%;
+    margin: 0 auto;
 }
 .estimate-table td {
     border: 1px solid;
+}
+.estimate-buttons {
+    display: flex;
+    flex-direction: row;
+}
+.estimate-buttons > div {
+    padding-right: 10px;
 }

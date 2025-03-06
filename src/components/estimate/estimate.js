@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ExportXLSX } from "../exportXLSX/exportXLSC";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
-import { price, factors2017, factorsCurrent, factorsMonth, computerTech } from "../../base-data/price";
+import { price, factors2017, factorsCurrent, factorsMonth2024, factorsMonth2025, factorsMonth2026, computerTech } from "../../base-data/price";
 import { useSelector } from "react-redux";
 import { db } from "../firebase/init";
 import { collection, addDoc, setDoc, updateDoc, getDoc, doc, query, where, getDocs } from "firebase/firestore";
@@ -50,10 +50,19 @@ export const Estimate = (props) => {
 
     sum += summaryKbKstW(0); //грунты + кб + кст + вода
 
-    const sum2017 = (sum * computerTech * factors2017).toFixed(2);
-    const sumRes = (sum2017 * factorsCurrent * factorsMonth).toFixed(2);
-    const currentDate = new Date();
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
+    const estimateMonth = dateNormalized.getMonth();
+    const estimateYear = dateNormalized.getFullYear();
+    const currentYear = new Date().getFullYear();
+    const currentIndex = (yearArr, month) => {
+        let sum = yearArr[0];
+        for (let i = 1; i <= month; i++) sum *= yearArr[i];
+        return sum.toFixed(4);
+    };
+    const sum2017 = (sum * computerTech * factors2017).toFixed(2);
+    const sumRes = (sum2017 * factorsCurrent * factorsMonth2024 * currentIndex(factorsMonth2025, estimateMonth)).toFixed(2);
+    
+    
 
     const writeSumInFire = async () => {
         try {
@@ -137,7 +146,7 @@ export const Estimate = (props) => {
             }
             {
                 header.length > 0 &&
-                <div>
+                <div className="estimate-buttons">
                     <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={code}/>
                     <ComplexEstimate />
                     <Link to={`/wet-calc`}>Рассчитать влажность</Link>
