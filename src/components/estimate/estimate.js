@@ -22,6 +22,8 @@ export const Estimate = (props) => {
     const kstPrice = 30000;
     const waterPrice = 105000;
 
+    const numberWithSpaces = (x) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
     const head = header.map((headIndi, index) => {
         return <td key={index}>{headIndi}</td>
     });
@@ -31,14 +33,14 @@ export const Estimate = (props) => {
     });
 
     const priceList = price.map((pr, index) => {
-        return <td key={index}>{pr.price}</td>
+        return <td key={index}>{numberWithSpaces(pr.price)}</td>
     });
 
     let sum = 0;
 
     const summary = price.map((price, index) => {
         sum += price.price * quantity[index];
-        return <td key={index}>{price.price * quantity[index]}</td>
+        return <td key={index}>{numberWithSpaces(price.price * quantity[index])}</td>
     });
 
     const summaryKbKstW = (strt) => {
@@ -122,24 +124,24 @@ export const Estimate = (props) => {
                     <tr>
                         <td>Цена за ед.</td>
                         {priceList}
-                        <td>{kbPrice}</td>
-                        <td>{kstPrice}</td>
-                        <td>{waterPrice}</td>
+                        <td>{numberWithSpaces(kbPrice)}</td>
+                        <td>{numberWithSpaces(kstPrice)}</td>
+                        <td>{numberWithSpaces(waterPrice)}</td>
                     </tr>
                     <tr>
                         <td>Сумма</td>
                         {summary}
-                        <td>{kbData.kbData?.length * kbPrice}</td>
-                        <td>{kstData.kstData?.length * kstPrice}</td>
-                        <td>{waterData.waterData?.length * waterPrice}</td>
+                        <td>{numberWithSpaces(kbData.kbData?.length * kbPrice)}</td>
+                        <td>{numberWithSpaces(kstData.kstData?.length * kstPrice)}</td>
+                        <td>{numberWithSpaces(waterData.waterData?.length * waterPrice)}</td>
                     </tr>
                     <tr>
                         <td>Итого с учетом коэффициентов на январь 2017</td>
-                        <td>{sum2017}</td>
+                        <td>{numberWithSpaces(sum2017)}</td>
                     </tr>
                     <tr>
                         <td>Итого с учетом коэффициентов на текущий месяц</td>
-                        <td>{sumRes}</td>
+                        <td>{numberWithSpaces(sumRes)}</td>
                     </tr>
                 </tbody>
             </table>

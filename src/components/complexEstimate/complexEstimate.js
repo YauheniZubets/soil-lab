@@ -63,7 +63,7 @@ export const ComplexEstimate = (props) => {
 
     return(
         <div>
-            <button onClick={cbSave}>Полная смета</button>
+            <button onClick={cbSave}>Список объектов</button>
         </div>
     )
 }
