@@ -15,10 +15,11 @@ import { Link } from 'react-router-dom';
 
 function App() {
 
-const [data, setData] = useState(null);
+// const [data, setData] = useState(null);
 const [__html, setHTML] = useState(null);
 const [headers, setHeaders] = useState([]);
 const [code, setCode] = useState(null);
+const [nameObj, setNameObj] = useState('');
 const [quantity, setQuantity] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 const [prices, setPrices] = useState([100, 200, 100, 200, 100, 200, 100, 200, 100, 200]);
 
@@ -44,22 +45,24 @@ function sortAll (allNumbes, indicators) {
   return [indicators]
 };
 
-function sortAllStatment (allNumbes) {
+function sortAllStatment (allNumbes, arr) {
+  arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   allNumbes.forEach(el => {
-    if (el[7] === '+') quantity[0] +=1;
-    if (el[8] === '+') quantity[1] +=1;
-    if (el[9] && el[7] === '+') quantity[2] +=1;
-    if (el[9] && el[11] === '+') quantity[3] +=1;
-    if (el[10] === '+') quantity[4] +=1;
-    if (el[11] === '+') quantity[5] +=1;
-    if (el[12] === '+') quantity[6] +=1;
-    if (el[13] === '+') quantity[7] +=1;
-    if (el[14] === '+') quantity[8] +=1;
-    if (el[15] === '+') quantity[9] +=1;
-    if (el[16] === '+') quantity[10] +=1;
-    if (el[17] === '+') quantity[11] +=1;
+    if (el[7] === '+') arr[0] +=1;
+    if (el[8] === '+') arr[1] +=1;
+    if (el[9] && el[7] === '+') arr[2] +=1;
+    if (el[9] && el[11] === '+') arr[3] +=1;
+    if (el[10] === '+') arr[4] +=1;
+    if (el[11] === '+') arr[5] +=1;
+    if (el[12] === '+') arr[6] +=1;
+    if (el[13] === '+') arr[7] +=1;
+    if (el[14] === '+') arr[8] +=1;
+    if (el[15] === '+') arr[9] +=1;
+    if (el[16] === '+') arr[10] +=1;
+    if (el[17] === '+') arr[11] +=1;
   });
-  setQuantity([...quantity])
+  return arr;
+  // setQuantity([...arr]);
 };
 
 const cbLoad = e => {
@@ -73,7 +76,8 @@ const cbLoad = e => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const sheetData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-      
+      console.log('sheetData: ', sheetData[1][11]);
+      setNameObj(sheetData[1][11]);
       const dateWorking = sheetData[0][6]; //дата ведомости
       dispatch(setDateWorking(dateWorking));
       const code = sheetData[0][11]; //шифр объекта
@@ -85,10 +89,10 @@ const cbLoad = e => {
       
       const main_rows = sheetData.slice(9);
       const usefulNumbers = number_rows(main_rows);
-      setData(usefulNumbers); //все давнные по скважинам и глубинам и типам грунта
+      // setData(usefulNumbers); //все давнные по скважинам и глубинам и типам грунта
       dispatch(setMainData(usefulNumbers));
       // sortAll(usefulNumbers, indicators);
-      sortAllStatment(usefulNumbers); //добавляем в массив количества всех показателей
+      setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
       // const htmlData = XLSX.utils.sheet_to_html(sheet);
       
       const sheetName1 = workbook.SheetNames[1];
@@ -117,9 +121,8 @@ const cbLoad = e => {
   return (
     <div className="App">
       <input  type='file' onChange={cbLoad} />
-      {__html && (
-        <div dangerouslySetInnerHTML={{__html}}/>
-      )}
+      <div className='name-obj'>{nameObj}</div>
+      {__html && <div dangerouslySetInnerHTML={{__html}}/>}
       <div>
         <Estimate header={headers} quantity={quantity} code={code}  />
       </div>
