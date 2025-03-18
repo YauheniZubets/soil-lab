@@ -94,7 +94,7 @@ export const Estimate = (props) => {
         if (codeFromRed && dateFromRed && sum) {
             getSumIfExist();
         }
-    }, [codeFromRed, dateFromRed, sum]);
+    }, [codeFromRed]);
 
     return (
         <div>

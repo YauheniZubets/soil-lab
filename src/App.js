@@ -1,5 +1,6 @@
 import {useState, useEffect}  from 'react';
 import { Estimate } from './components/estimate/estimate';
+import { ObjectsList } from './components/objectsList/ObjectsList';
 import * as XLSX from 'xlsx';
 import './App.css';
 import { indicators } from './base-data/base-data';
@@ -126,6 +127,7 @@ const cbLoad = e => {
       <div>
         <Estimate header={headers} quantity={quantity} code={code}  />
       </div>
+      <ObjectsList />
     </div>
   );
 };
