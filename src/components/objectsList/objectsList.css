@@ -1,0 +1,21 @@
+.objects-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.objects-list > div:nth-child(odd) {
+    background-color: greenyellow;
+}
+.main-list {
+    display: flex;
+    /* border: solid 3px greenyellow; */
+    width: 100vw;
+    margin-bottom: 1px;
+}
+
+.main-list-obj {
+    /* border: solid 1px greenyellow; */
+    flex-basis: 30%;
+    cursor: pointer;
+}

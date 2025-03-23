@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  waterData: null,
+  waterData: [],
 }
 
 export const waterSlice = createSlice({

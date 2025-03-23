@@ -17,6 +17,7 @@ export const Estimate = (props) => {
     const kbData = useSelector(state=>state.kbData);
     const kstData = useSelector(state=>state.kstData);
     const waterData = useSelector(state=>state.waterData);
+    // const mainData = useSelector(state=>state.mainData);
     const [isExistObj, setIsExist] = useState(false);
     const kbPrice = 95000;
     const kstPrice = 30000;
@@ -32,6 +33,11 @@ export const Estimate = (props) => {
 
     const priceList = price.map((pr, index) => {
         return <td key={index}>{pr.price}</td>
+    });
+
+    const waterDataNoNested = waterData.waterData.map((item, index) => {
+        const ob = {watData: item};
+        return ob;
     });
 
     let sum = 0;
@@ -61,8 +67,6 @@ export const Estimate = (props) => {
     };
     const sum2017 = (sum * computerTech * factors2017).toFixed(2);
     const sumRes = (sum2017 * factorsCurrent * factorsMonth2024 * currentIndex(factorsMonth2025, estimateMonth)).toFixed(2);
-    
-    
 
     const writeSumInFire = async () => {
         try {
@@ -70,7 +74,8 @@ export const Estimate = (props) => {
                 protocol: protocolFromRed.protocol,
                 code: codeFromRed.code,
                 date: ExcelDateToJSDate(dateFromRed.dateWorking),
-                sum: sumRes
+                sum: sumRes,
+                waterData: waterDataNoNested // инфа по воде
             });
             alert('Записано успешно');
         } catch (e) {

@@ -16,13 +16,11 @@ import { Link } from 'react-router-dom';
 
 function App() {
 
-// const [data, setData] = useState(null);
 const [__html, setHTML] = useState(null);
 const [headers, setHeaders] = useState([]);
 const [code, setCode] = useState(null);
 const [nameObj, setNameObj] = useState('');
 const [quantity, setQuantity] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-const [prices, setPrices] = useState([100, 200, 100, 200, 100, 200, 100, 200, 100, 200]);
 
 const dispatch = useDispatch();
 
@@ -30,23 +28,23 @@ function number_rows( main_rows) {
   return main_rows.filter(el => Number.isInteger(el[0] && el[1]))
 };
 
-function sortAll (allNumbes, indicators) {
-  allNumbes.forEach(el => {
-    if (el[indicators.fractions.key] === '+') indicators.fractions.inStatement.push(el);
-    if (el[indicators.wet.key] === '+') indicators.wet.inStatement.push(el);
-    if (el[indicators.density.key] === '+') indicators.density.inStatement.push(el);
-    if (el[indicators.partDensity.key] === '+') indicators.partDensity.inStatement.push(el);
-    if (el[indicators.fluidity.key] === '+') indicators.fluidity.inStatement.push(el);
-    if (el[indicators.filtration.key] === '+') indicators.filtration.inStatement.push(el);
-    if (el[indicators.corner.key] === '+') indicators.corner.inStatement.push(el);
-    if (el[indicators.organik.key] === '+') indicators.organik.inStatement.push(el);
-    if (el[indicators.carbo.key] === '+') indicators.carbo.inStatement.push(el);
-    if (el[indicators.areometry.key] === '+') indicators.areometry.inStatement.push(el);
-  });
-  return [indicators]
-};
+// function sortAll (allNumbes, indicators) {
+//   allNumbes.forEach(el => {
+//     if (el[indicators.fractions.key] === '+') indicators.fractions.inStatement.push(el);
+//     if (el[indicators.wet.key] === '+') indicators.wet.inStatement.push(el);
+//     if (el[indicators.density.key] === '+') indicators.density.inStatement.push(el);
+//     if (el[indicators.partDensity.key] === '+') indicators.partDensity.inStatement.push(el);
+//     if (el[indicators.fluidity.key] === '+') indicators.fluidity.inStatement.push(el);
+//     if (el[indicators.filtration.key] === '+') indicators.filtration.inStatement.push(el);
+//     if (el[indicators.corner.key] === '+') indicators.corner.inStatement.push(el);
+//     if (el[indicators.organik.key] === '+') indicators.organik.inStatement.push(el);
+//     if (el[indicators.carbo.key] === '+') indicators.carbo.inStatement.push(el);
+//     if (el[indicators.areometry.key] === '+') indicators.areometry.inStatement.push(el);
+//   });
+//   return [indicators]
+// };
 
-function sortAllStatment (allNumbes, arr) {
+function sortAllStatment (allNumbes, arr) { //подсчет кол-ва в ведомости плюсов
   arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   allNumbes.forEach(el => {
     if (el[7] === '+') arr[0] +=1;
@@ -77,7 +75,6 @@ const cbLoad = e => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const sheetData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-      console.log('sheetData: ', sheetData[1][11]);
       setNameObj(sheetData[1][11]);
       const dateWorking = sheetData[0][6]; //дата ведомости
       dispatch(setDateWorking(dateWorking));
