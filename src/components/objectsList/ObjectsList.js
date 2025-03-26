@@ -10,7 +10,7 @@ export const ObjectsList = () => {
     const [waterData, setWaterData] = useState([]);
 
     const listFromFire = async () => {
-        const q = query(collection(db, "works"));
+        const q = query(collection(db, '2024'));
         const querySnapshot = await getDocs(q);
         const allArr = [];
         querySnapshot.forEach((doc) => {
@@ -52,7 +52,7 @@ export const ObjectsList = () => {
                 <div className="main-list-obj" value={i[0]}>{i[1]}</div>
                 <div className="main-list-obj" value={i[0]}>{i[3]}</div>
                 <div className="main-list-obj" value={i[0]}>
-                    <WordProt />
+                    <WordProt protName={i[0]} />
                 </div>
             </div>
         )

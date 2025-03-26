@@ -59,6 +59,7 @@ export const Estimate = (props) => {
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
     const estimateMonth = dateNormalized.getMonth();
     const estimateYear = dateNormalized.getFullYear();
+    console.log('estimateYear: ', estimateYear);
     const currentYear = new Date().getFullYear();
     const currentIndex = (yearArr, month) => {
         let sum = yearArr[0];
@@ -70,10 +71,10 @@ export const Estimate = (props) => {
 
     const writeSumInFire = async () => {
         try {
-            const docRef = await setDoc(doc(db, "works", String(protocolFromRed.protocol)), {
+            const docRef = await setDoc(doc(db, `${estimateYear}`, String(protocolFromRed.protocol)), {
                 protocol: protocolFromRed.protocol,
                 code: codeFromRed.code,
-                date: ExcelDateToJSDate(dateFromRed.dateWorking),
+                date: dateNormalized,
                 sum: sumRes,
                 waterData: waterDataNoNested // инфа по воде
             });

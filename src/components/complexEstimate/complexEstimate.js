@@ -14,7 +14,7 @@ export const ComplexEstimate = (props) => {
       let allArr = [];
 
       const saveFullEstFromFire = async () => {
-        const q = query(collection(db, "works"));
+        const q = query(collection(db, "2024"));
         const querySnapshot = await getDocs(q);
         
         querySnapshot.forEach((doc) => {
