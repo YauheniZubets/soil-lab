@@ -7,6 +7,7 @@ import wetReducer from './wetReducer';
 import kbDataReducer from './kbDataReducer';
 import kstDataReducer from './kstDataReducer';
 import waterDataReducer from './waterDataReducer';
+import allQuanReducer from './allQuanReducer';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     wetDataMass: wetReducer,
     kbData: kbDataReducer,
     kstData: kstDataReducer,
-    waterData: waterDataReducer
+    waterData: waterDataReducer,
+    allQuan: allQuanReducer
   },
 })

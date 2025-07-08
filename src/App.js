@@ -12,6 +12,7 @@ import { setMainData } from './redux/mainDataReducer';
 import { setKbData } from './redux/kbDataReducer';
 import { setKstData } from './redux/kstDataReducer';
 import { setWaterData } from './redux/waterDataReducer';
+import { setAllQuan } from './redux/allQuanReducer';
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -83,16 +84,12 @@ const cbLoad = e => {
       
       let headers = sheetData[6].slice(7, 18);
       headers.splice(2, 1, 'Плотность песчаных грунтов', 'Плотность глинистых грунтов');
-      setHeaders(headers);
+      setHeaders(headers); //сделан дубликат в редакс это потом удалить
       
       const main_rows = sheetData.slice(9);
       const usefulNumbers = number_rows(main_rows);
-      // setData(usefulNumbers); //все давнные по скважинам и глубинам и типам грунта
       dispatch(setMainData(usefulNumbers));
-      // sortAll(usefulNumbers, indicators);
-      setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
-      // const htmlData = XLSX.utils.sheet_to_html(sheet);
-      
+      // setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
       const sheetName1 = workbook.SheetNames[1];
       const sheet1 = workbook.Sheets[sheetName1];
       const sheetData1 = XLSX.utils.sheet_to_json(sheet1, {header: 1});
@@ -113,6 +110,9 @@ const cbLoad = e => {
       const main_rows3 = sheetData3.slice(7);
       const usefulNumbers3 = number_rows(main_rows3);
       dispatch(setWaterData([...usefulNumbers3])); //инфо с листа вода
+
+      setQuantity([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]);
+      dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
     };
 }
 

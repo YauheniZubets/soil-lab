@@ -11,23 +11,28 @@ import './estimate.css';
 
 export const Estimate = (props) => {
     const {header, quantity, code} = props;
+    console.log('quantity: ', quantity);
     const codeFromRed = useSelector(state=>state.code);
     const protocolFromRed = useSelector(state=>state.protocol);
     const dateFromRed = useSelector(state=>state.dateWorking);
     const kbData = useSelector(state=>state.kbData);
     const kstData = useSelector(state=>state.kstData);
     const waterData = useSelector(state=>state.waterData);
+    const allQuan = useSelector(state=>state.allQuan);
     // const mainData = useSelector(state=>state.mainData);
     const [isExistObj, setIsExist] = useState(false);
     const kbPrice = 95000;
     const kstPrice = 30000;
     const waterPrice = 105000;
 
-    const head = header.map((headIndi, index) => {
-        return <td key={index}>{headIndi}</td>
+    const head = price.map((nm, index) => { //
+        return <td key={index}>{nm.name}</td>
     });
 
-    const quanList = quantity.map((indi, index) => {
+    // const quanList = quantity.map((indi, index) => {
+    //     if (header.length) return <td key={index}>{indi}</td>
+    // });
+    const quanList = allQuan.allQuan.map((indi, index) => {
         if (header.length) return <td key={index}>{indi}</td>
     });
 
@@ -59,7 +64,6 @@ export const Estimate = (props) => {
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
     const estimateMonth = dateNormalized.getMonth();
     const estimateYear = dateNormalized.getFullYear();
-    console.log('estimateYear: ', estimateYear);
     const currentYear = new Date().getFullYear();
     const currentIndex = (yearArr, month) => {
         let sum = yearArr[0];
@@ -76,7 +80,8 @@ export const Estimate = (props) => {
                 code: codeFromRed.code,
                 date: dateNormalized,
                 sum: sumRes,
-                waterData: waterDataNoNested // инфа по воде
+                waterData: waterDataNoNested, // инфа по воде
+                allQuan: allQuan.allQuan
             });
             alert('Записано успешно');
         } catch (e) {
@@ -112,32 +117,20 @@ export const Estimate = (props) => {
                     <tr>
                         <td/>
                         {head}
-                        <td>КБ</td>
-                        <td>КСТ</td>
-                        <td>Вода</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Количество</td>
                         {quanList}
-                        <td>{kbData.kbData?.length}</td>
-                        <td>{kstData.kstData?.length}</td>
-                        <td>{waterData.waterData?.length}</td>
                     </tr>
                     <tr>
                         <td>Цена за ед.</td>
                         {priceList}
-                        <td>{kbPrice}</td>
-                        <td>{kstPrice}</td>
-                        <td>{waterPrice}</td>
                     </tr>
                     <tr>
                         <td>Сумма</td>
                         {summary}
-                        <td>{kbData.kbData?.length * kbPrice}</td>
-                        <td>{kstData.kstData?.length * kstPrice}</td>
-                        <td>{waterData.waterData?.length * waterPrice}</td>
                     </tr>
                     <tr>
                         <td>Итого с учетом коэффициентов на январь 2017</td>

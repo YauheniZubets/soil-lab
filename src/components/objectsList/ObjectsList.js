@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { WordProt } from "../word-prot/wordProt";
+import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
 import { db } from "../firebase/init";
 import { getDocs, query, collection } from "firebase/firestore";
 import './objectsList.css';
@@ -8,9 +9,13 @@ export const ObjectsList = () => {
 
     const [dataList, setDataList] = useState([]);
     const [waterData, setWaterData] = useState([]);
+    const [choosedYear, setChoosedYear] = useState('2025');
 
-    const listFromFire = async () => {
-        const q = query(collection(db, '2024'));
+    const yearsListArr = [2020, 2021, 2022, 2023, 2024, 2025];
+    
+
+    const listFromFire = async (year) => {
+        const q = query(collection(db, year));
         const querySnapshot = await getDocs(q);
         const allArr = [];
         querySnapshot.forEach((doc) => {
@@ -24,14 +29,14 @@ export const ObjectsList = () => {
     };
 
     useEffect(()=>{
-        listFromFire();
+        listFromFire(choosedYear);
     }, []);
 
-    const cbObjClick = (ev) => {
-        const target = ev.target;
-        const prot = +target.getAttribute('value');
-        console.log('target: ', target.getAttribute('value'));
-    };
+    // const cbObjClick = (ev) => {
+    //     const target = ev.target;
+    //     const prot = +target.getAttribute('value');
+    //     console.log('target: ', target.getAttribute('value'));
+    // };
 
     const cbDownloadWater = async () => {
         console.log('click');
@@ -43,30 +48,55 @@ export const ObjectsList = () => {
           console.log('data: ', data.waterData);
         });
         // return allArr;
+    };
+
+    const cbChangeYear = (e) => {
+        const val = e.target.value;
+        if (val === choosedYear) return;
+        if (val) {
+            setChoosedYear(String(val));
+            listFromFire(String(val));
+        } 
     }
+
+    const yearsList = yearsListArr.map((year, ind) => {
+        return <option key={ind}>{year}</option>
+    });
 
     const dataListShow = dataList.map((i, ind) => {
         return (
-            <div key={ind} className="main-list" onClick={cbObjClick}>
+            <div key={ind} className="main-list" >
                 <div className="main-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
                 <div className="main-list-obj" value={i[0]}>{i[1]}</div>
                 <div className="main-list-obj" value={i[0]}>{i[3]}</div>
                 <div className="main-list-obj" value={i[0]}>
-                    <WordProt protName={i[0]} />
+                    <WordProt protName={i[0]} protYear={i[2]?.getFullYear()}/>
+                </div>
+                <div className="main-list-obj" value={i[0]}>
+                    <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
                 </div>
             </div>
         )
     });
 
     return (
-        <div className="objects-list">
-            <div className="main-list">
-                <div className="main-list-obj">Номер протокола</div>
-                <div className="main-list-obj">Номер объекта</div>
-                <div className="main-list-obj">Сумма по смете</div>
-                <div className="main-list-obj">Действия</div>
+        <div className="objects-list-main">
+            <div className="objects-list-choose">
+                <span>Выберите год: </span>
+                <select onChange={cbChangeYear}>
+                   {yearsList}
+                </select>
             </div>
-            {dataListShow}
+            <div className="objects-list">
+                <div className="main-list">
+                    <div className="main-list-obj">Номер протокола</div>
+                    <div className="main-list-obj">Номер объекта</div>
+                    <div className="main-list-obj">Сумма по смете</div>
+                    <div className="main-list-obj">Действия</div>
+                </div>
+                {dataListShow}
+            </div>
         </div>
+        
     )
 }

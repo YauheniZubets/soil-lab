@@ -10,7 +10,7 @@
 .main-list {
     display: flex;
     /* border: solid 3px greenyellow; */
-    width: 100vw;
+    width: 100%;
     margin-bottom: 1px;
 }
 

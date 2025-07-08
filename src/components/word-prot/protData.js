@@ -1,49 +1,8 @@
-import { useEffect, useState } from 'react';
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/init";
-import * as fs from "fs";
-// import {protDoc} from "./protData1";
-// import { ProtData } from './protData';
-import {saveAs} from 'file-saver';
-import { Packer } from "docx";
-import { Document, Paragraph, Table, TableCell, TableRow, WidthType, TextRun, Tab, AlignmentType, SectionType, HeadingLevel, 
+import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, TextRun, Tab, AlignmentType, SectionType, HeadingLevel, 
     SymbolRun, TabStopType, TabStopPosition, BorderStyle, FrameAnchorType, HorizontalPositionAlign, VerticalPositionAlign
 } from "docx";
 
-export const WordProt = (props) => {
-
-    const {protName, protYear} = props;
-
-    const [waterData, setWaterData] = useState([]);
-    const [cl, setCl] = useState(false);
-
-    const cbStartDownloadWater = (ev) => {
-        // const targ = ev.target;
-        // const protocolFromBut = targ.id;
-        if (isFinite(protName)) downloadWater(String(protName), String(protYear));
-        //  setCl(!cl);
-    };
-
-    const downloadWater = async (prot, year) => {
-        const docRef = doc(db, year, prot);
-        const docSnap = await getDoc(docRef); //получаем один документ вместо всей коллекции
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            if (data?.waterData.length) { //проверка на данные по воде
-                setWaterData(data?.waterData);
-                Packer.toBlob(protDoc).then(blob => {
-                    saveAs(blob, "example.docx");
-                    console.log("Document created successfully");
-                });
-            }
-        };
-    };
-
-    useEffect(()=>{
-        // console.log('waterData', waterData);
-        // console.log('render');
-        // console.log('click', cl);
-    })
+export const ProtData = () => {
 
     const title = new Paragraph({
         children: [
@@ -148,7 +107,7 @@ export const WordProt = (props) => {
         ],
     });
     
-    const protocolName = new Paragraph({
+    const protName = new Paragraph({
         children: [
             new TextRun({
                 text: "ПРОТОКОЛ ИСПЫТАНИЙ",
@@ -313,26 +272,6 @@ export const WordProt = (props) => {
         ],
         alignment:	AlignmentType.CENTER,
     });
-
-    console.log('waterData', waterData);
-    const waters = waterData.map((item, index) => { //попробовать foreach
-        console.log('item?.watData[0]: ', item?.watData[1]);
-        return (
-            new TableRow({
-                children: [
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:`${item?.watData[0]}`, size: 26})], alignment: AlignmentType.CENTER})]}),
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:`${item?.watData[1]}`, size: 26})], alignment: AlignmentType.CENTER})]}),
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:`${item?.watData[2]}`, size: 26})], alignment: AlignmentType.CENTER})]}),
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"6,8", size: 26, bold: true, })], alignment: AlignmentType.CENTER})]}),
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"± 0,04", size: 26})], alignment: AlignmentType.CENTER})]}),
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"ХА0", size: 26})], alignment: AlignmentType.CENTER})]}),
-                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"Неагрессивная", size: 26})], alignment: AlignmentType.CENTER})]}),
-                ]
-            })
-        )
-    });
-    console.log('waters', waters);
-
     
     const resultstTable = new Table({
         rows: [
@@ -353,7 +292,17 @@ export const WordProt = (props) => {
                     new TableCell({children: [new Paragraph({children:[new TextRun({text:"СН 2.01.07-2020 табл.5", size: 26})], alignment: AlignmentType.CENTER})], columnSpan: 2}),
                 ],
             }),
-
+            new TableRow({
+                children: [
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"69w", size: 26})], alignment: AlignmentType.CENTER})]}),
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"2", size: 26})], alignment: AlignmentType.CENTER})]}),
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"3,5-4,0", size: 26})], alignment: AlignmentType.CENTER})]}),
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"6,8", size: 26, bold: true, })], alignment: AlignmentType.CENTER})]}),
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"± 0,04", size: 26})], alignment: AlignmentType.CENTER})]}),
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"ХА0", size: 26})], alignment: AlignmentType.CENTER})]}),
+                    new TableCell({children: [new Paragraph({children:[new TextRun({text:"Неагрессивная", size: 26})], alignment: AlignmentType.CENTER})]}),
+                ],
+            }),
         ]
     });
     
@@ -540,32 +489,55 @@ export const WordProt = (props) => {
         alignment:	AlignmentType.JUSTIFIED
     });
     
-    const protDoc = new Document({
-        sections: [
-            {
-                children: [
-                    title, emptyPar, headerTable, emptyPar, protocolName, protNumb, emptyPar, infoTable, emptyPar, 
-                    conditions, room, tempAndPress, emptyPar, eqiupmentTitle, eqiupmentTable, emptyPar, resultsTitle, emptyPar,
-                    resultstTable, emptyPar, resultsDescr, responsibility, emptyPar, signaturesTable, emptyPar, stampPlace, stampPlace2,
-                    emptyPar, copies, copy1, copy2, emptyPar, dateIssued, emptyPar, lawCopies
-                ],
-                properties: {
-                    page: {
-                        margin: {
-                            top: '1cm',
-                            right: '1cm',
-                            bottom: '1cm',
-                            left: '2cm',
+    return new Document({
+            sections: [
+                {
+                    children: [
+                        title, emptyPar, headerTable, emptyPar, protName, protNumb, emptyPar, infoTable, emptyPar, 
+                        conditions, room, tempAndPress, emptyPar, eqiupmentTitle, eqiupmentTable, emptyPar, resultsTitle, emptyPar,
+                        resultstTable, emptyPar, resultsDescr, responsibility, emptyPar, signaturesTable, emptyPar, stampPlace, stampPlace2,
+                        emptyPar, copies, copy1, copy2, emptyPar, dateIssued, emptyPar, lawCopies
+                    ],
+                    properties: {
+                        page: {
+                            margin: {
+                                top: '1cm',
+                                right: '1cm',
+                                bottom: '1cm',
+                                left: '2cm',
+                            },
                         },
                     },
-                },
-            }
-        ],
-    });
-
+                }
+               
+            ],
+        });
     
-
-    return (
-        <input type="button" onClick={cbStartDownloadWater} value='Протокол pH'/>
-    )
-};
+    
+    
+    
+    // const protDoc = new Document({
+    //     sections: [
+    //         {
+    //             children: [
+    //                 title, emptyPar, headerTable, emptyPar, protName, protNumb, emptyPar, infoTable, emptyPar, 
+    //                 conditions, room, tempAndPress, emptyPar, eqiupmentTitle, eqiupmentTable, emptyPar, resultsTitle, emptyPar,
+    //                 resultstTable, emptyPar, resultsDescr, responsibility, emptyPar, signaturesTable, emptyPar, stampPlace, stampPlace2,
+    //                 emptyPar, copies, copy1, copy2, emptyPar, dateIssued, emptyPar, lawCopies
+    //             ],
+    //             properties: {
+    //                 page: {
+    //                     margin: {
+    //                         top: '1cm',
+    //                         right: '1cm',
+    //                         bottom: '1cm',
+    //                         left: '2cm',
+    //                     },
+    //                 },
+    //             },
+    //         }
+           
+    //     ],
+    // });
+    
+}
