@@ -7,77 +7,77 @@ export const factorsMonth2026 = [1.0101, 1.0101, 1.0101, 1.0101, 1.0101, 1.0101,
 export const price = [
     {
         name: 'грансостав',
-        price: 33000,
+        price: 33,
         point: 1.1
     },
     {
         name: 'влажность',
-        price: 14000,
+        price: 14,
         point: 1.1
     },
     {
         name: 'плотность песчаных грунтов',
-        price: 11000,
+        price: 11,
         point: 1.1
     },
     {
         name: 'плотность глинистых грунтов',
-        price: 18000,
+        price: 18,
         point: 1.1,
     },
     {
         name: 'плотность частиц',
-        price: 26000,
+        price: 26,
         point: 1.1
     },
     {
         name: 'текучесть',
-        price: 68000,
+        price: 68,
         point: 1.1
     },
     {
         name: 'коэффициент фильтрации',
-        price: 61000,
+        price: 61,
         point: 1.1
     },
     {
         name: 'угол откоса',
-        price: 13000,
+        price: 13,
         point: 1.1
     },
     {
         name: 'орг вещество',
-        price: 33000,
+        price: 33,
         point: 1.1
     },
     {
         name: 'степень разложения',
-        price: 33000,
+        price: 33,
         point: 1.1
     },
     {
         name: 'карбонатность',
-        price: 31000,
+        price: 31,
         point: 1.1
     },
     {
         name: 'Грансостав ареометрическим методом',
-        price: 33000,
+        price: 33,
         point: 1.1
     },
     {
         name: 'Кор. к бетону',
-        price: 95000,
+        price: 95,
         point: 1.1
     },
     {
         name: 'Кор. к стали',
-        price: 30000,
+        price: 30,
         point: 1.1
     },
     {
         name: 'Хим. анализ воды',
-        price: 105000,
+        price: 105,
         point: 1.1
     }
 ];

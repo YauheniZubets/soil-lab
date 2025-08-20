@@ -36,6 +36,15 @@ export const EachObjEstimate = (props) => {
     return arr;
   };
 
+  const sum2017 = (allQuan) => {
+    let sum = 0;
+    for (let i = 0; i < price.length; i++) {
+      const element = price[i];
+      sum += allQuan[i] * element['price'];
+    }
+    return sum;
+  }
+
   const cbSave = (e) => downloadEstimateData(protName, protYear);
 
   const saveExcEst = () => {
@@ -148,6 +157,16 @@ export const EachObjEstimate = (props) => {
       };
 
       worksheet.addRows(pricePoints(allQuan));
+
+      const row4 = worksheet.addRow(); 
+      row4.getCell(2).value = 'Итого в денежных знаках образца 2009 года на 01.01.2017';
+      row4.font = {
+        name: 'Times New Roman',
+        color: { argb: 'black' },
+        size: 12,
+      };
+      row4.getCell(7).value = sum2017(allQuan);
+
 
       // для скачивания
       workbook.xlsx.writeBuffer().then(data => {
