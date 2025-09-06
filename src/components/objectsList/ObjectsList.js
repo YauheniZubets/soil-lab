@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { WordProt } from "../word-prot/wordProt";
 import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
+import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { db } from "../firebase/init";
 import { getDocs, query, collection } from "firebase/firestore";
 import './objectsList.css';
@@ -12,7 +13,6 @@ export const ObjectsList = () => {
     const [choosedYear, setChoosedYear] = useState('2025');
 
     const yearsListArr = [2020, 2021, 2022, 2023, 2024, 2025];
-    
 
     const listFromFire = async (year) => {
         const q = query(collection(db, year));
@@ -86,6 +86,9 @@ export const ObjectsList = () => {
                 <select onChange={cbChangeYear}>
                    {yearsList}
                 </select>
+            </div>
+            <div>
+                <ComplexEstimate />
             </div>
             <div className="objects-list">
                 <div className="main-list">

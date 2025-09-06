@@ -10,6 +10,7 @@ export const EachObjEstimate = (props) => {
   const {protName, protYear} = props;
 
   const [allQuan, setAllQuan] = useState([]);
+  const [dateFired, setDateFired] = useState('');
 
   const headers = useSelector(state=>state.headersData); //показатели с редакс
 
@@ -18,6 +19,7 @@ export const EachObjEstimate = (props) => {
     const docSnap = await getDoc(docRef); //получаем один документ вместо всей коллекции
     if (docSnap.exists()) {
       const data = docSnap.data();
+      setDateFired(new Date(data.date.seconds * 1000));
       const allQuan = data.allQuan;
       setAllQuan(allQuan);
     };
@@ -26,12 +28,14 @@ export const EachObjEstimate = (props) => {
   useEffect(()=> {
     if (allQuan.length > 0) saveExcEst(); // проверка на длину массива количесвтва и потом скачивание
   }, [allQuan]);
+
+  const monthRus = (dateFired) => dateFired.toLocaleString('default', { month: 'long' });
     
   const pricePoints = (allQuan) => {
     let arr = [];
     for (let i = 0; i < price.length; i++) {
       const element = price[i];
-      arr.push([i+1, element['name'], element['point'], element['price'], allQuan[i], 1, allQuan[i] * element['price']]);
+      arr.push([i+1, element['name'], element['point'], `${element['price']}.000`, allQuan[i], 1, allQuan[i] * element['price']]);
     }
     return arr;
   };
@@ -60,28 +64,36 @@ export const EachObjEstimate = (props) => {
         header: 0.3, footer: 0.3
       };
       worksheet.columns = [ //задана ширина первого столбца
-        {width: 5},
-        {width: 30},
+        {width: 3},
+        {width: 34},
         {width: 15},
         {width: 8},
-        {width: 9},
-        {width: 10},
+        {width: 8},
+        {width: 8},
         {width: 11}
       ];
       const row1 = worksheet.addRow(); // название
-      row1.getCell(5).value = 'Сметный расчет';
+      worksheet.mergeCells('A1:G1');
+      row1.getCell(1).value = 'Сметный расчет';
       row1.font = {
         name: 'Times New Roman',
         color: { argb: 'black' },
         size: 12,
+        bold: true
       };
+      row1.alignment ={ horizontal: 'center' };
+
       const row2 = worksheet.addRow(); // название
+      worksheet.mergeCells('A2:G2');
       row2.getCell(4).value = 'Испытательная лаборатория (отдел №12)';
       row2.font = {
         name: 'Times New Roman',
         color: { argb: 'black' },
         size: 12,
+        bold: true
       };
+      row2.alignment ={ horizontal: 'center' };
+
       const row3 = worksheet.addRow(); // название
       row3.font = {
         name: 'Times New Roman',
@@ -132,7 +144,7 @@ export const EachObjEstimate = (props) => {
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('F3').alignment = {
+      worksheet.getCell('E3').alignment = {
         wrapText: true
       };
       row3.getCell(6).value = 'Коэф-т';
@@ -156,7 +168,14 @@ export const EachObjEstimate = (props) => {
         wrapText: true
       };
 
-      worksheet.addRows(pricePoints(allQuan));
+      const dataRows = worksheet.addRows(pricePoints(allQuan));
+      for (const row of dataRows) {
+        row.font = {
+          name: 'Times New Roman',
+          color: { argb: 'black' },
+          size: 12,
+        };
+      }
 
       const row4 = worksheet.addRow();
       row4.getCell(1).value = '16';
@@ -217,6 +236,17 @@ export const EachObjEstimate = (props) => {
         size: 12,
       };
       row7.height = 122;
+
+      const row8 = worksheet.addRow();
+      row8.getCell(1).value = `Итого сумма с учетом прогнозных индексов в ценах на ${monthRus(dateFired)} ${new Date(dateFired).getFullYear()}, руб`;
+      worksheet.mergeCells('A23:F23');
+      row8.font = {
+        name: 'Times New Roman',
+        color: { argb: 'black' },
+        size: 12,
+        bold: true
+      };
+      row8.getCell(7).value = summaCur;
 
 
       // для скачивания

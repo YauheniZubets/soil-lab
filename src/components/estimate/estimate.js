@@ -147,7 +147,6 @@ export const Estimate = (props) => {
                 header.length > 0 &&
                 <div className="estimate-buttons">
                     <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={code}/>
-                    <ComplexEstimate />
                     <Link to={`/wet-calc`}>Рассчитать влажность</Link>
                 </div>
             }
