@@ -11,6 +11,8 @@ export const EachObjEstimate = (props) => {
 
   const [allQuan, setAllQuan] = useState([]);
   const [dateFired, setDateFired] = useState('');
+  const [protFired, setProtFired] = useState('');
+  const [codeFired, setCodeFired] = useState('');
 
   const headers = useSelector(state=>state.headersData); //показатели с редакс
 
@@ -19,7 +21,10 @@ export const EachObjEstimate = (props) => {
     const docSnap = await getDoc(docRef); //получаем один документ вместо всей коллекции
     if (docSnap.exists()) {
       const data = docSnap.data();
+      console.log('data: ', data);
       setDateFired(new Date(data.date.seconds * 1000));
+      setCodeFired(data.code);
+      setProtFired(data.protocol);
       const allQuan = data.allQuan;
       setAllQuan(allQuan);
     };
@@ -65,7 +70,7 @@ export const EachObjEstimate = (props) => {
       };
       worksheet.columns = [ //задана ширина первого столбца
         {width: 3},
-        {width: 34},
+        {width: 38},
         {width: 15},
         {width: 8},
         {width: 8},
@@ -94,6 +99,16 @@ export const EachObjEstimate = (props) => {
       };
       row2.alignment ={ horizontal: 'center' };
 
+      const row21 = worksheet.addRow(); // шифр и протокол
+      row21.getCell(1).value = `Шифр объекта: ${codeFired}`;
+      row21.getCell(3).value = `Протокол: ${protFired}п/${new Date(dateFired).getFullYear()}`;
+      row21.font = {
+        name: 'Times New Roman',
+        color: { argb: 'black' },
+        size: 12,
+        bold: true
+      };
+
       const row3 = worksheet.addRow(); // название
       row3.font = {
         name: 'Times New Roman',
@@ -101,70 +116,70 @@ export const EachObjEstimate = (props) => {
         size: 12,
       };
       row3.getCell(1).value = '№ п/п';
-      worksheet.getCell('A3').border = {
+      worksheet.getCell('A4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('A3').alignment = {
+      worksheet.getCell('A4').alignment = {
         wrapText: true
       };
       row3.getCell(2).value = 'Вид работ';
-      worksheet.getCell('B3').border = {
+      worksheet.getCell('B4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'}
       };
       row3.getCell(3).value = '№ част. глав табл. и пункт. указ. к разд. или главе СБЦ';
-      worksheet.getCell('C3').border = {
+      worksheet.getCell('C4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('C3').alignment = {
+      worksheet.getCell('C4').alignment = {
         wrapText: true
       };
       row3.getCell(4).value = 'Расценка (тыс. руб.)';
-      worksheet.getCell('D3').border = {
+      worksheet.getCell('D4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('D3').alignment = {
+      worksheet.getCell('D4').alignment = {
         wrapText: true
       };
       row3.getCell(5).value = 'Кол-во образцов';
-      worksheet.getCell('E3').border = {
+      worksheet.getCell('E4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('E3').alignment = {
+      worksheet.getCell('E4').alignment = {
         wrapText: true
       };
       row3.getCell(6).value = 'Коэф-т';
-      worksheet.getCell('F3').border = {
+      worksheet.getCell('F4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('F3').alignment = {
+      worksheet.getCell('F4').alignment = {
         wrapText: true
       };
       row3.getCell(7).value = 'Стоимость (тыс. руб.)';
-      worksheet.getCell('G3').border = {
+      worksheet.getCell('G4').border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
         right: {style:'thin'},
       };
-      worksheet.getCell('G3').alignment = {
+      worksheet.getCell('G4').alignment = {
         wrapText: true
       };
 
@@ -191,7 +206,7 @@ export const EachObjEstimate = (props) => {
       const row5 = worksheet.addRow();
       row5.getCell(1).value = '17';
       row5.getCell(2).value = 'Выполнение лабораторных работ с применением компьютерных технологий';
-      worksheet.getCell('B20').alignment = { wrapText: true };
+      worksheet.getCell('B21').alignment = { wrapText: true };
       row5.getCell(3).value = 'п. 2.18 д';
       row5.getCell(6).value = '1,2';
       const summaWithComp = (summaBase * 1.2).toFixed(2);
@@ -206,10 +221,10 @@ export const EachObjEstimate = (props) => {
       const row6 = worksheet.addRow();
       row6.getCell(1).value = '18';
       row6.getCell(2).value = 'Письмо МАиС РБ № 02-3-05/648 от 16.01.2017, приказ МАиС №11 от 27.01.2017 (стоимость в рублях)';
-      worksheet.mergeCells('B21:C21');
-      worksheet.mergeCells('D21:F21');
-      worksheet.getCell('B21').alignment = { wrapText: true };
-      worksheet.getCell('D21').alignment = { wrapText: true };
+      worksheet.mergeCells('B22:C22');
+      worksheet.mergeCells('D22:F22');
+      worksheet.getCell('B22').alignment = { wrapText: true };
+      worksheet.getCell('D22').alignment = { wrapText: true };
       row6.getCell(4).value = `${summaWithComp} * 1000 * 0.00013164 * 1.0914`;
       const summa2017 = (summaWithComp * 1000 * 0.00013164 * 1.0914).toFixed(2);
       row6.getCell(7).value = summa2017;
@@ -218,15 +233,15 @@ export const EachObjEstimate = (props) => {
         color: { argb: 'black' },
         size: 12,
       };
-      row6.height = 50;
+      row6.height = 49;
 
       const row7 = worksheet.addRow();
       row7.getCell(1).value = '19';
       row7.getCell(2).value = 'Письмо МАиС РБ № 04-3-03/1433 от 31.01.2018, приказ МАиС №23 от 30.01.2019, письмо МАиС РБ от 05.04.2019 №04-3-03/4689, письмо МАиС РБ от 30.04.2020 №04-3-03/5416, письмо МАиС РБ от 12.04.2021 №04-3-03/4433,   письмо МАиС РБ от 04.05.2023 №04-3-04/5871 (стоимость в рублях)';
-      worksheet.mergeCells('B22:C22');
-      worksheet.mergeCells('D22:F22');
-      worksheet.getCell('B22').alignment = { wrapText: true };
-      worksheet.getCell('D22').alignment = { wrapText: true };
+      worksheet.mergeCells('B23:C23');
+      worksheet.mergeCells('D23:F23');
+      worksheet.getCell('B23').alignment = { wrapText: true };
+      worksheet.getCell('D23').alignment = { wrapText: true };
       row7.getCell(4).value = `${summa2017} * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.0076`;
       const summaCur = (summa2017 * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.0076).toFixed(2);
       row7.getCell(7).value = summaCur;
@@ -235,11 +250,11 @@ export const EachObjEstimate = (props) => {
         color: { argb: 'black' },
         size: 12,
       };
-      row7.height = 122;
+      row7.height = 92;
 
       const row8 = worksheet.addRow();
       row8.getCell(1).value = `Итого сумма с учетом прогнозных индексов в ценах на ${monthRus(dateFired)} ${new Date(dateFired).getFullYear()}, руб`;
-      worksheet.mergeCells('A23:F23');
+      worksheet.mergeCells('A24:F24');
       row8.font = {
         name: 'Times New Roman',
         color: { argb: 'black' },
@@ -247,6 +262,30 @@ export const EachObjEstimate = (props) => {
         bold: true
       };
       row8.getCell(7).value = summaCur;
+
+      const row9 = worksheet.addRow(); //пустая строка
+      row9.getCell(1).value = '';
+
+      const row10 = worksheet.addRow();
+      row10.getCell(1).value = 'Начальник УИИ';
+      row10.getCell(5).value = 'Д.О. Кудревич';
+      row10.font = {
+        name: 'Times New Roman',
+        color: { argb: 'black' },
+        size: 12,
+      };
+
+      const row11 = worksheet.addRow(); //пустая строка
+      row11.getCell(1).value = '';
+
+      const row12 = worksheet.addRow();
+      row12.getCell(1).value = 'Начальник ИЛ';
+      row12.getCell(5).value = 'Е.А. Зубец';
+      row12.font = {
+        name: 'Times New Roman',
+        color: { argb: 'black' },
+        size: 12,
+      };
 
 
       // для скачивания

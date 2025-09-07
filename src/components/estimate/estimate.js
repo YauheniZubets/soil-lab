@@ -11,9 +11,9 @@ import './estimate.css';
 
 export const Estimate = (props) => {
     const {header, quantity, code} = props;
-    console.log('quantity: ', quantity);
     const codeFromRed = useSelector(state=>state.code);
     const protocolFromRed = useSelector(state=>state.protocol);
+    console.log('protocolFromRed: ', protocolFromRed);
     const dateFromRed = useSelector(state=>state.dateWorking);
     const kbData = useSelector(state=>state.kbData);
     const kstData = useSelector(state=>state.kstData);
@@ -46,6 +46,7 @@ export const Estimate = (props) => {
     });
 
     let sum = 0;
+    
 
     const summary = price.map((price, index) => {
         sum += price.price * quantity[index];
@@ -59,19 +60,21 @@ export const Estimate = (props) => {
         return strt;
     };
 
-    sum += summaryKbKstW(0); //грунты + кб + кст + вода
+    // sum += summaryKbKstW(0); //грунты + кб + кст + вода
+    // console.log('sum: ', sum);
 
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
     const estimateMonth = dateNormalized.getMonth();
     const estimateYear = dateNormalized.getFullYear();
+    console.log('estimateYear: ', estimateYear);
     const currentYear = new Date().getFullYear();
-    const currentIndex = (yearArr, month) => {
+    const currentIndex = (yearArr, month) => { //подсчет индексов ДОПИСАТЬ в формулу!!
         let sum = yearArr[0];
         for (let i = 1; i <= month; i++) sum *= yearArr[i];
         return sum.toFixed(4);
     };
-    const sum2017 = (sum * computerTech * factors2017).toFixed(2);
-    const sumRes = (sum2017 * factorsCurrent * factorsMonth2024 * currentIndex(factorsMonth2025, estimateMonth)).toFixed(2);
+    const sum2017 = (sum * 1000 * computerTech * factors2017).toFixed(2);
+    const sumRes = (sum2017 * factorsCurrent * factorsMonth2024).toFixed(2);
 
     const writeSumInFire = async () => {
         try {

@@ -10,7 +10,7 @@ export const ObjectsList = () => {
 
     const [dataList, setDataList] = useState([]);
     const [waterData, setWaterData] = useState([]);
-    const [choosedYear, setChoosedYear] = useState('2025');
+    const [choosedYear, setChoosedYear] = useState('2024');
 
     const yearsListArr = [2020, 2021, 2022, 2023, 2024, 2025];
 
