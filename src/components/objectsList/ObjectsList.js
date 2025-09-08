@@ -11,6 +11,7 @@ export const ObjectsList = () => {
     const [dataList, setDataList] = useState([]);
     const [waterData, setWaterData] = useState([]);
     const [choosedYear, setChoosedYear] = useState('2024');
+    const [choosedMonth, setChoosedMonth] = useState('');
 
     const yearsListArr = [2020, 2021, 2022, 2023, 2024, 2025];
 
@@ -57,6 +58,14 @@ export const ObjectsList = () => {
             setChoosedYear(String(val));
             listFromFire(String(val));
         } 
+    };
+
+    const cbChangeMonth = (e) => {
+        const val = e.target.value;
+        if (val === choosedYear) return;
+        if (val) {
+            setChoosedMonth(val);
+        } 
     }
 
     const yearsList = yearsListArr.map((year, ind) => {
@@ -86,9 +95,24 @@ export const ObjectsList = () => {
                 <select onChange={cbChangeYear}>
                    {yearsList}
                 </select>
+                <select onChange={cbChangeMonth}>
+                    <option value=''>Весь год</option>
+                    <option value={0}>Январь</option>
+                    <option value={1}>Февраль</option>
+                    <option value={2}>Март</option>
+                    <option value={3}>Апрель</option>
+                    <option value={4}>Май</option>
+                    <option value={5}>Июнь</option>
+                    <option value={6}>Июль</option>
+                    <option value={7}>Август</option>
+                    <option value={8}>Сентябрь</option>
+                    <option value={9}>Октябрь</option>
+                    <option value={10}>Ноябрь</option>
+                    <option value={11}>Декабрь</option>
+                </select>
             </div>
             <div>
-                <ComplexEstimate />
+                <ComplexEstimate choosedYear={choosedYear} choosedMonth={choosedMonth}/>
             </div>
             <div className="objects-list">
                 <div className="main-list">

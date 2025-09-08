@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as ExcelJS from 'exceljs';
 import { db } from "../firebase/init";
-import { collection, doc, setDoc, getDocs, query, Timestamp } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, query, Timestamp, where, startAt, orderBy } from "firebase/firestore";
 
 export const ComplexEstimate = (props) => {
+
+    const {choosedYear, choosedMonth} = props;
 
     useEffect(() => {
 
@@ -14,9 +16,8 @@ export const ComplexEstimate = (props) => {
       let allArr = [];
 
       const saveFullEstFromFire = async () => {
-        const q = query(collection(db, "2024"));
+        const q = query(collection(db, choosedYear), orderBy("date"), startAt(new Date(choosedYear, choosedMonth))); //выбор ведомости по месяцу
         const querySnapshot = await getDocs(q);
-        
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           const date = new Date(data?.date.seconds * 1000);
