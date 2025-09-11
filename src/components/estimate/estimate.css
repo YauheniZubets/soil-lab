@@ -1,15 +1,30 @@
+.table-brd {
+    position: relative
+}
 .estimate-table {
     border: 2px solid;
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
+    display: block;
 }
 .estimate-table td {
     border: 1px solid;
+    font-size: 12px;
 }
 .estimate-buttons {
     display: flex;
     flex-direction: row;
 }
-.estimate-buttons > div {
+/* .estimate-buttons > div {
     padding-right: 10px;
+} */
+.close-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.close-btn-scaled {
+    transform: scale(1.1);
+
 }

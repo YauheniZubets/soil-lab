@@ -13,7 +13,7 @@ export const ObjectsList = () => {
     const [choosedYear, setChoosedYear] = useState('2024');
     const [choosedMonth, setChoosedMonth] = useState('');
 
-    const yearsListArr = [2020, 2021, 2022, 2023, 2024, 2025];
+    const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025'];
 
     const listFromFire = async (year) => {
         const q = query(collection(db, year));
@@ -69,7 +69,7 @@ export const ObjectsList = () => {
     }
 
     const yearsList = yearsListArr.map((year, ind) => {
-        return <option key={ind}>{year}</option>
+        return <option key={ind} value={year}>{year}</option>
     });
 
     const dataListShow = dataList.map((i, ind) => {
@@ -92,7 +92,7 @@ export const ObjectsList = () => {
         <div className="objects-list-main">
             <div className="objects-list-choose">
                 <span>Выберите год: </span>
-                <select onChange={cbChangeYear}>
+                <select value={choosedYear} onChange={cbChangeYear}>
                    {yearsList}
                 </select>
                 <select onChange={cbChangeMonth}>
