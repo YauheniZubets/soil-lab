@@ -13,6 +13,8 @@ import { setKbData } from './redux/kbDataReducer';
 import { setKstData } from './redux/kstDataReducer';
 import { setWaterData } from './redux/waterDataReducer';
 import { setAllQuan } from './redux/allQuanReducer';
+import { setEstimateStatus } from './redux/closeEstimateReducer';
+import { setNewDescription } from './redux/descrReducer';
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -24,6 +26,8 @@ const [nameObj, setNameObj] = useState('');
 const [quantity, setQuantity] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
 const dispatch = useDispatch();
+const estimateStatus = useSelector(state=>state.closeEstimate);
+console.log('estimateStatus: ', estimateStatus.estimateStatus);
 
 function number_rows( main_rows) {
   return main_rows.filter(el => Number.isInteger(el[0] && el[1]))
@@ -76,7 +80,8 @@ const cbLoad = e => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const sheetData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-      setNameObj(sheetData[1][11]);
+      dispatch(setNewDescription(sheetData[1][11])); //текстовое описание в редакс
+      // setNameObj(sheetData[1][11]);
       const dateWorking = sheetData[0][6]; //дата ведомости
       dispatch(setDateWorking(dateWorking));
       const code = sheetData[0][11]; //шифр объекта
@@ -85,6 +90,8 @@ const cbLoad = e => {
       let headers = sheetData[6].slice(7, 18);
       headers.splice(2, 1, 'Плотность песчаных грунтов', 'Плотность глинистых грунтов');
       setHeaders(headers); //сделан дубликат в редакс это потом удалить
+
+      headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
       
       const main_rows = sheetData.slice(9);
       const usefulNumbers = number_rows(main_rows);
@@ -114,6 +121,7 @@ const cbLoad = e => {
       setQuantity([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]);
       dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
     };
+    e.target.value = '';
 }
 
   return (
@@ -121,9 +129,12 @@ const cbLoad = e => {
       <input  type='file' onChange={cbLoad} />
       <div className='name-obj'>{nameObj}</div>
       {__html && <div dangerouslySetInnerHTML={{__html}}/>}
-      <div>
-        <Estimate header={headers} quantity={quantity} code={code}  />
-      </div>
+      {
+        estimateStatus.estimateStatus && <Estimate header={headers} quantity={quantity} code={code}  />
+      }
+      {/* <div>
+        
+      </div> */}
       <ObjectsList />
     </div>
   );

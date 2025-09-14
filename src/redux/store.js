@@ -8,6 +8,8 @@ import kbDataReducer from './kbDataReducer';
 import kstDataReducer from './kstDataReducer';
 import waterDataReducer from './waterDataReducer';
 import allQuanReducer from './allQuanReducer';
+import closeEstimateReducer from './closeEstimateReducer';
+import descrReducer from './descrReducer';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +21,8 @@ export const store = configureStore({
     kbData: kbDataReducer,
     kstData: kstDataReducer,
     waterData: waterDataReducer,
-    allQuan: allQuanReducer
+    allQuan: allQuanReducer,
+    closeEstimate: closeEstimateReducer, //закрытие комп estimate
+    description: descrReducer // текстовое описание объекта
   },
 })

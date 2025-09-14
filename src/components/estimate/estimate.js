@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { ExportXLSX } from "../exportXLSX/exportXLSC";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { price, factors2017, factorsCurrent, factorsMonth2024, factorsMonth2025, factorsMonth2026, computerTech } from "../../base-data/price";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setEstimateStatus } from "../../redux/closeEstimateReducer";
 import { db } from "../firebase/init";
 import { collection, addDoc, setDoc, updateDoc, getDoc, doc, query, where, getDocs } from "firebase/firestore";
 import ExcelDateToJSDate from "../../base-data/convertDate";
@@ -19,9 +20,12 @@ export const Estimate = (props) => {
     const kstData = useSelector(state=>state.kstData);
     const waterData = useSelector(state=>state.waterData);
     const allQuan = useSelector(state=>state.allQuan);
+    const description = useSelector(state=>state.description)
     const [isExistObj, setIsExist] = useState(false);
     const [table, setTable] = useState(true);
     const [scaled, setScaled] = useState(false);
+
+    const dispatch = useDispatch();
 
     const head = price.map((nm, index) => { //
         return <td key={index}>{nm.name}</td>
@@ -87,8 +91,8 @@ export const Estimate = (props) => {
         }
     };
 
-    const cbCloseTable = (ev) => {
-        setTable(!table);
+    const cbCloseComp = (ev) => { //закрыть комп estimate
+        dispatch(setEstimateStatus(false));
     };
 
     useEffect(() => {
@@ -100,7 +104,11 @@ export const Estimate = (props) => {
     return (
         <div>
                  {isExistObj && <div>Этот объект уже в базе</div>}
-                 {header.length > 0 && <div>{codeFromRed.code}</div>}
+                 {/* {header.length > 0 && <div></div>} */}
+                 <div className="estimate-descr">
+                    <div>{codeFromRed.code}</div>
+                    <div>{description.description}</div>
+                </div>
                  {header.length > 0 && table && 
                      <div className="table-brd">
                          <table className="estimate-table">
@@ -133,7 +141,7 @@ export const Estimate = (props) => {
                                  </tr>
                              </tbody>
                          </table>
-                         <div className={`close-btn`} onClick={cbCloseTable}>
+                         <div className={`close-btn`} onClick={cbCloseComp}>
                              <img src={closeImg} alt='close' />
                          </div>
                      </div>

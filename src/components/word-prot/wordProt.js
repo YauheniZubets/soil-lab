@@ -314,9 +314,7 @@ export const WordProt = (props) => {
         alignment:	AlignmentType.CENTER,
     });
 
-    console.log('waterData', waterData);
     const waters = waterData.map((item, index) => { //попробовать foreach
-        console.log('item?.watData[0]: ', item?.watData[1]);
         return (
             new TableRow({
                 children: [
@@ -331,7 +329,6 @@ export const WordProt = (props) => {
             })
         )
     });
-    console.log('waters', waters);
 
     
     const resultstTable = new Table({
