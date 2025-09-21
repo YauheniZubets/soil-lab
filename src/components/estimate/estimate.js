@@ -12,7 +12,6 @@ import closeImg from './icons8-close.svg';
 import './estimate.css';
 
 export const Estimate = (props) => {
-    const {header, quantity, code} = props;
     const codeFromRed = useSelector(state=>state.code);
     const protocolFromRed = useSelector(state=>state.protocol);
     const dateFromRed = useSelector(state=>state.dateWorking);
@@ -20,11 +19,14 @@ export const Estimate = (props) => {
     const kstData = useSelector(state=>state.kstData);
     const waterData = useSelector(state=>state.waterData);
     const allQuan = useSelector(state=>state.allQuan);
-    const description = useSelector(state=>state.description)
+    const description = useSelector(state=>state.description);
+    const mainData = useSelector(state=>state.mainData);
+    const headers = useSelector(state=>state.headers);
     const [isExistObj, setIsExist] = useState(false);
+    const [isExistStatus, setIsExistStatus] = useState('');
     const [table, setTable] = useState(true);
     const [scaled, setScaled] = useState(false);
-
+    // console.log(codeFromRed.code, protocolFromRed.protocol, dateFromRed.dateWorking, allQuan.allQuan, description.description);
     const dispatch = useDispatch();
 
     const head = price.map((nm, index) => { //
@@ -32,7 +34,7 @@ export const Estimate = (props) => {
     });
 
     const quanList = allQuan.allQuan.map((indi, index) => {
-        if (header.length) return <td key={index}>{indi}</td>
+        if (headers.headers.length) return <td key={index}>{indi}</td>
     });
 
     const priceList = price.map((pr, index) => {
@@ -47,8 +49,8 @@ export const Estimate = (props) => {
     let sum = 0;
 
     const summary = price.map((price, index) => {
-        sum += price.price * quantity[index];
-        return <td key={index}>{price.price * quantity[index]}</td>
+        sum += price.price * allQuan.allQuan[index];
+        return <td key={index}>{price.price * allQuan.allQuan[index]}</td>
     });
 
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
@@ -73,7 +75,8 @@ export const Estimate = (props) => {
                 waterData: waterDataNoNested, // инфа по воде
                 allQuan: allQuan.allQuan
             });
-            alert('Записано успешно');
+            setIsExistStatus('Записано успешно');
+            // alert('Записано успешно');
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -84,10 +87,14 @@ export const Estimate = (props) => {
         const docSnap = await getDoc(docRef);
         const resCode = await docSnap.data()?.code;
         if (resCode === codeFromRed.code) {
-            setIsExist(true);
-            alert(`Этот объект ${codeFromRed.code} уже был сохранен ранее`);
+            if (isExistObj === false) {
+                setIsExist(true);
+                setIsExistStatus('Этот объект уже в базе')
+            }
+            console.log('в базе');
         } else {
             writeSumInFire();
+            isExistObj && setIsExist(false);
         }
     };
 
@@ -96,20 +103,24 @@ export const Estimate = (props) => {
     };
 
     useEffect(() => {
-        if (codeFromRed.code && dateFromRed.dateWorking && sum > 0) {
+        if (codeFromRed.code) {
             getSumIfExist();
         }
     }, [codeFromRed.code]);
 
+    useEffect(() => {
+        if (isExistStatus) setTimeout(()=> setIsExistStatus(''), 5000);
+    }, [isExistStatus]);
+
+    // console.log('render');
     return (
         <div>
-                 {isExistObj && <div>Этот объект уже в базе</div>}
-                 {/* {header.length > 0 && <div></div>} */}
+                 {isExistObj && <div>{isExistStatus}</div>}
                  <div className="estimate-descr">
                     <div>{codeFromRed.code}</div>
                     <div>{description.description}</div>
                 </div>
-                 {header.length > 0 && table && 
+                 {headers.headers.length > 0 && table && 
                      <div className="table-brd">
                          <table className="estimate-table">
                              <thead>
@@ -147,9 +158,9 @@ export const Estimate = (props) => {
                      </div>
                  }
                  {
-                     header.length > 0 &&
+                     headers.headers.length > 0 &&
                      <div className="estimate-buttons">
-                         <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={code}/>
+                         <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={codeFromRed.code}/>
                          <Link to={`/wet-calc`}>Рассчитать влажность</Link>
                      </div>
                  }

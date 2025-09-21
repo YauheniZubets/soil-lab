@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx';
 import './App.css';
 import { indicators } from './base-data/base-data';
 import { useSelector, useDispatch } from 'react-redux';
-import { setNewCode } from './redux/reducer';
+import { setNewCode } from './redux/codeReducer';
 import { setNewProtocol } from './redux/protocolReducer';
 import { setDateWorking } from './redux/dateReducer';
 import { setMainData } from './redux/mainDataReducer';
@@ -15,19 +15,13 @@ import { setWaterData } from './redux/waterDataReducer';
 import { setAllQuan } from './redux/allQuanReducer';
 import { setEstimateStatus } from './redux/closeEstimateReducer';
 import { setNewDescription } from './redux/descrReducer';
+import { setHeaders } from './redux/headersReducer';
 import { Link } from 'react-router-dom';
 
 function App() {
 
-const [__html, setHTML] = useState(null);
-const [headers, setHeaders] = useState([]);
-const [code, setCode] = useState(null);
-const [nameObj, setNameObj] = useState('');
-const [quantity, setQuantity] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-
 const dispatch = useDispatch();
 const estimateStatus = useSelector(state=>state.closeEstimate);
-console.log('estimateStatus: ', estimateStatus.estimateStatus);
 
 function number_rows( main_rows) {
   return main_rows.filter(el => Number.isInteger(el[0] && el[1]))
@@ -75,66 +69,64 @@ const cbLoad = e => {
   dispatch(setNewProtocol(protocolName));
   const reader = new FileReader();
   reader.readAsArrayBuffer(file);
-    reader.onload = async (e) => {
-      const workbook = XLSX.read(e.target.result, {type: 'binary'});
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const sheetData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-      dispatch(setNewDescription(sheetData[1][11])); //текстовое описание в редакс
-      // setNameObj(sheetData[1][11]);
-      const dateWorking = sheetData[0][6]; //дата ведомости
-      dispatch(setDateWorking(dateWorking));
-      const code = sheetData[0][11]; //шифр объекта
-      dispatch(setNewCode(code));
-      
-      let headers = sheetData[6].slice(7, 18);
-      headers.splice(2, 1, 'Плотность песчаных грунтов', 'Плотность глинистых грунтов');
-      setHeaders(headers); //сделан дубликат в редакс это потом удалить
+  reader.onload = async (e) => {
+    const workbook = XLSX.read(e.target.result, {type: 'binary'});
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const sheetData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+    dispatch(setNewDescription(sheetData[1][11])); //текстовое описание в редакс
+    // setNameObj(sheetData[1][11]);
+    const dateWorking = sheetData[0][6]; //дата ведомости
+    dispatch(setDateWorking(dateWorking));
+    const code = sheetData[0][11]; //шифр объекта
+    dispatch(setNewCode(code));
+    
+    let headers = sheetData[6].slice(7, 18);
+    headers.splice(2, 1, 'Плотность песчаных грунтов', 'Плотность глинистых грунтов');
+    dispatch(setHeaders(headers));
+    // setHeaders(headers); //сделан дубликат в редакс это потом удалить
+    
+    const main_rows = sheetData.slice(9);
+    const usefulNumbers = number_rows(main_rows);
+    dispatch(setMainData(usefulNumbers));
+    // setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
+    const sheetName1 = workbook.SheetNames[1];
+    const sheet1 = workbook.Sheets[sheetName1];
+    const sheetData1 = XLSX.utils.sheet_to_json(sheet1, {header: 1});
+    const main_rows1 = sheetData1.slice(8);
+    const usefulNumbers1 = number_rows(main_rows1);
+    dispatch(setKbData([...usefulNumbers1])); //инфо с листа кор к бет
 
-      headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
-      
-      const main_rows = sheetData.slice(9);
-      const usefulNumbers = number_rows(main_rows);
-      dispatch(setMainData(usefulNumbers));
-      // setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
-      const sheetName1 = workbook.SheetNames[1];
-      const sheet1 = workbook.Sheets[sheetName1];
-      const sheetData1 = XLSX.utils.sheet_to_json(sheet1, {header: 1});
-      const main_rows1 = sheetData1.slice(8);
-      const usefulNumbers1 = number_rows(main_rows1);
-      dispatch(setKbData([...usefulNumbers1])); //инфо с листа кор к бет
+    const sheetName2 = workbook.SheetNames[2];
+    const sheet2 = workbook.Sheets[sheetName2];
+    const sheetData2 = XLSX.utils.sheet_to_json(sheet2, {header: 1});
+    const main_rows2 = sheetData2.slice(8);
+    const usefulNumbers2 = number_rows(main_rows2);
+    dispatch(setKstData([...usefulNumbers2])); //инфо с листа кор к стали
 
-      const sheetName2 = workbook.SheetNames[2];
-      const sheet2 = workbook.Sheets[sheetName2];
-      const sheetData2 = XLSX.utils.sheet_to_json(sheet2, {header: 1});
-      const main_rows2 = sheetData2.slice(8);
-      const usefulNumbers2 = number_rows(main_rows2);
-      dispatch(setKstData([...usefulNumbers2])); //инфо с листа кор к стали
+    const sheetName3 = workbook.SheetNames[3];
+    const sheet3 = workbook.Sheets[sheetName3];
+    const sheetData3 = XLSX.utils.sheet_to_json(sheet3, {header: 1});
+    const main_rows3 = sheetData3.slice(7);
+    const usefulNumbers3 = number_rows(main_rows3);
+    dispatch(setWaterData([...usefulNumbers3])); //инфо с листа вода
 
-      const sheetName3 = workbook.SheetNames[3];
-      const sheet3 = workbook.Sheets[sheetName3];
-      const sheetData3 = XLSX.utils.sheet_to_json(sheet3, {header: 1});
-      const main_rows3 = sheetData3.slice(7);
-      const usefulNumbers3 = number_rows(main_rows3);
-      dispatch(setWaterData([...usefulNumbers3])); //инфо с листа вода
+    dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
 
-      setQuantity([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]);
-      dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
-    };
-    e.target.value = '';
+    headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
+  };
+    
+  e.target.value = '';
 }
 
   return (
     <div className="App">
       <input  type='file' onChange={cbLoad} />
-      <div className='name-obj'>{nameObj}</div>
-      {__html && <div dangerouslySetInnerHTML={{__html}}/>}
+      {/* <div className='name-obj'>{nameObj}</div> */}
+      {/* {__html && <div dangerouslySetInnerHTML={{__html}}/>} */}
       {
-        estimateStatus.estimateStatus && <Estimate header={headers} quantity={quantity} code={code}  />
+        estimateStatus.estimateStatus && <Estimate />
       }
-      {/* <div>
-        
-      </div> */}
       <ObjectsList />
     </div>
   );

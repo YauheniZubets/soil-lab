@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import codeReducer from './reducer';
+import codeReducer from './codeReducer';
 import protocolReducer from './protocolReducer';
 import dateReducer from './dateReducer';
 import mainDataReducer from './mainDataReducer';
@@ -10,6 +10,7 @@ import waterDataReducer from './waterDataReducer';
 import allQuanReducer from './allQuanReducer';
 import closeEstimateReducer from './closeEstimateReducer';
 import descrReducer from './descrReducer';
+import headersReducer from './headersReducer';
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     waterData: waterDataReducer,
     allQuan: allQuanReducer,
     closeEstimate: closeEstimateReducer, //закрытие комп estimate
-    description: descrReducer // текстовое описание объекта
+    description: descrReducer, // текстовое описание объекта
+    headers: headersReducer, // заголовки испытаний
   },
 })
