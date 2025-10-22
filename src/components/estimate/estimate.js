@@ -4,9 +4,12 @@ import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { price, factors2017, factorsCurrent, factorsMonth2024, factorsMonth2025, factorsMonth2026, computerTech } from "../../base-data/price";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstimateStatus } from "../../redux/closeEstimateReducer";
+import { setSumRes } from "../../redux/sumReducer";
 import { db } from "../firebase/init";
 import { collection, addDoc, setDoc, updateDoc, getDoc, doc, query, where, getDocs } from "firebase/firestore";
 import ExcelDateToJSDate from "../../base-data/convertDate";
+import { sumBase, sumWithComp, sum2017, sumCur} from "../../base-data/calc-price";
+import { LOAD_STARTED, LOAD_CONTINUE, LOAD_ENDED, LOAD_ERROR} from "../../redux/loadStatusReducer";
 import { Link } from "react-router-dom";
 import closeImg from './icons8-close.svg';
 import './estimate.css';
@@ -46,12 +49,7 @@ export const Estimate = (props) => {
         return ob;
     });
 
-    let sum = 0;
-
-    const summary = price.map((price, index) => {
-        sum += price.price * allQuan.allQuan[index];
-        return <td key={index}>{price.price * allQuan.allQuan[index]}</td>
-    });
+    const sum = sumBase(allQuan.allQuan, price);
 
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
     const estimateMonth = dateNormalized.getMonth();
@@ -62,8 +60,9 @@ export const Estimate = (props) => {
         for (let i = 1; i <= month; i++) sum *= yearArr[i];
         return sum.toFixed(4);
     };
-    const sum2017 = (sum * 1000 * computerTech * factors2017).toFixed(2);
-    const sumRes = (sum2017 * factorsCurrent * factorsMonth2024).toFixed(2);
+    const sumComputed = sumWithComp(sum);
+    const summma2017 = sum2017(sumComputed);
+    const sumRes = sumCur(summma2017);
 
     const writeSumInFire = async () => {
         try {
@@ -116,11 +115,11 @@ export const Estimate = (props) => {
     return (
         <div>
                  {isExistObj && <div>{isExistStatus}</div>}
-                 <div className="estimate-descr">
+                 {/* <div className="estimate-descr">
                     <div>{codeFromRed.code}</div>
                     <div>{description.description}</div>
-                </div>
-                 {headers.headers.length > 0 && table && 
+                </div> */}
+                 {/* {headers.headers.length > 0 && table && 
                      <div className="table-brd">
                          <table className="estimate-table">
                              <thead>
@@ -140,11 +139,11 @@ export const Estimate = (props) => {
                                  </tr>
                                  <tr>
                                      <td>Сумма</td>
-                                     {summary}
+                                     {sum}
                                  </tr>
                                  <tr>
                                      <td>Итого с учетом коэффициентов на январь 2017</td>
-                                     <td>{sum2017}</td>
+                                     <td>{summma2017}</td>
                                  </tr>
                                  <tr>
                                      <td>Итого с учетом коэффициентов на текущий месяц</td>
@@ -156,14 +155,14 @@ export const Estimate = (props) => {
                              <img src={closeImg} alt='close' />
                          </div>
                      </div>
-                 }
-                 {
+                 } */}
+                 {/* {
                      headers.headers.length > 0 &&
                      <div className="estimate-buttons">
                          <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={codeFromRed.code}/>
                          <Link to={`/wet-calc`}>Рассчитать влажность</Link>
                      </div>
-                 }
+                 } */}
         </div>
     )
 }

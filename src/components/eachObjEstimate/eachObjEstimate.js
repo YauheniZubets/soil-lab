@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { price } from '../../base-data/price';
 import { db } from "../firebase/init";
 import { doc, getDoc, query, collection } from "firebase/firestore";
+import { sumBase, sumWithComp, sum2017, sumCur } from '../../base-data/calc-price';
 import * as ExcelJS from 'exceljs';
 
 export const EachObjEstimate = (props) => {
@@ -45,14 +46,14 @@ export const EachObjEstimate = (props) => {
     return arr;
   };
 
-  const sumBase = (allQuan) => {
-    let sum = 0;
-    for (let i = 0; i < price.length; i++) {
-      const element = price[i];
-      sum += allQuan[i] * element['price'];
-    }
-    return sum;
-  }
+  // const sumBase = (allQuan) => {
+  //   let sum = 0;
+  //   for (let i = 0; i < price.length; i++) {
+  //     const element = price[i];
+  //     sum += allQuan[i] * element['price'];
+  //   }
+  //   return sum;
+  // }
 
   const cbSave = (e) => downloadEstimateData(protName, protYear);
 
@@ -200,7 +201,7 @@ export const EachObjEstimate = (props) => {
         color: { argb: 'black' },
         size: 12,
       };
-      const summaBase = sumBase(allQuan);
+      const summaBase = sumBase(allQuan, price);
       row4.getCell(7).value = summaBase;
 
       const row5 = worksheet.addRow();
@@ -209,7 +210,7 @@ export const EachObjEstimate = (props) => {
       worksheet.getCell('B21').alignment = { wrapText: true };
       row5.getCell(3).value = 'п. 2.18 д';
       row5.getCell(6).value = '1,2';
-      const summaWithComp = (summaBase * 1.2).toFixed(2);
+      const summaWithComp = sumWithComp(summaBase);
       row5.getCell(7).value = summaWithComp;
       row5.font = {
         name: 'Times New Roman',
@@ -226,7 +227,7 @@ export const EachObjEstimate = (props) => {
       worksheet.getCell('B22').alignment = { wrapText: true };
       worksheet.getCell('D22').alignment = { wrapText: true };
       row6.getCell(4).value = `${summaWithComp} * 1000 * 0.00013164 * 1.0914`;
-      const summa2017 = (summaWithComp * 1000 * 0.00013164 * 1.0914).toFixed(2);
+      const summa2017 = sum2017(summaWithComp);
       row6.getCell(7).value = summa2017;
       row6.font = {
         name: 'Times New Roman',
@@ -243,7 +244,7 @@ export const EachObjEstimate = (props) => {
       worksheet.getCell('B23').alignment = { wrapText: true };
       worksheet.getCell('D23').alignment = { wrapText: true };
       row7.getCell(4).value = `${summa2017} * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.0076`;
-      const summaCur = (summa2017 * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.0076).toFixed(2);
+      const summaCur = sumCur(summa2017);
       row7.getCell(7).value = summaCur;
       row7.font = {
         name: 'Times New Roman',

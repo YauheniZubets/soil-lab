@@ -1,21 +1,30 @@
 .objects-list {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
 }
-.objects-list > div:nth-child(odd) {
+.objects-list-header {
+    display: grid;
+    grid-template-columns: 10% auto auto auto;
+    gap: 5px;
+}
+.objects-list-header-obj {
+    background: fixed grey;
+}
+.objects-list-data {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-template-rows: auto;
+}
+.objects-list > div:nth-child(even) {
     background-color: greenyellow;
 }
-.main-list {
-    display: flex;
+/* .main-list { */
+    /* display: flex; */
     /* border: solid 3px greenyellow; */
-    width: 100%;
+    /* width: 100%;
     margin-bottom: 1px;
 }
 
 .main-list-obj {
     /* border: solid 1px greenyellow; */
-    flex-basis: 30%;
+    /* flex-basis: 30%;
     cursor: pointer;
-}
+} */ 

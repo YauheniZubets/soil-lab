@@ -16,12 +16,14 @@ import { setAllQuan } from './redux/allQuanReducer';
 import { setEstimateStatus } from './redux/closeEstimateReducer';
 import { setNewDescription } from './redux/descrReducer';
 import { setHeaders } from './redux/headersReducer';
+import { setLoadQuan, addObjectRequested } from './redux/loadStatusReducer';
 import { Link } from 'react-router-dom';
 
 function App() {
 
 const dispatch = useDispatch();
 const estimateStatus = useSelector(state=>state.closeEstimate);
+const loadQuan = useSelector(state => state.loadStatus.loadQuan);
 
 function number_rows( main_rows) {
   return main_rows.filter(el => Number.isInteger(el[0] && el[1]))
@@ -62,13 +64,11 @@ function sortAllStatment (allNumbes, arr) { //подсчет кол-ва в ве
   return arr;
   // setQuantity([...arr]);
 };
-
-const cbLoad = e => {
-  const file = e.target.files[0];
-  const protocolName = parseInt(file.name.split(' ')[0]); //получаем номер протокола в формате ХХХ
+const gettingMainDataFromInp = (addingFile) => {
+  const protocolName = parseInt(addingFile?.name.split(' ')[0]); //получаем номер протокола в формате ХХХ
   dispatch(setNewProtocol(protocolName));
   const reader = new FileReader();
-  reader.readAsArrayBuffer(file);
+  reader.readAsArrayBuffer(addingFile);
   reader.onload = async (e) => {
     const workbook = XLSX.read(e.target.result, {type: 'binary'});
     const sheetName = workbook.SheetNames[0];
@@ -115,6 +115,75 @@ const cbLoad = e => {
 
     headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
   };
+};
+
+
+const cbLoad = e => {
+  const files = e.target.files;
+  const targ = e.target.result;
+  const filesLength = files.length; //количество объектов
+  // dispatch(setLoadQuan(+filesLength));
+  // for (let i = 0; i <= files.length; i++) {
+  //   const file = files[i];
+  //   gettingMainDataFromInp(file);
+  // }
+  const file = e.target.files[0];
+  const file1 = e.target.files[1];
+  const file2 = e.target.files[2];
+  gettingMainDataFromInp(file);
+  // console.log('files: ', file, file1, file2);
+  // gettingMainDataFromInp(file);
+  // const protocolName = parseInt(file.name.split(' ')[0]); //получаем номер протокола в формате ХХХ
+  // dispatch(setNewProtocol(protocolName));
+  // const reader = new FileReader();
+  // reader.readAsArrayBuffer(file);
+  // reader.onload = async (e) => {
+  //   const workbook = XLSX.read(e.target.result, {type: 'binary'});
+  //   console.log('workbook: ', workbook);
+  //   const sheetName = workbook.SheetNames[0];
+  //   const sheet = workbook.Sheets[sheetName];
+  //   const sheetData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+  //   dispatch(setNewDescription(sheetData[1][11])); //текстовое описание в редакс
+  //   // setNameObj(sheetData[1][11]);
+  //   const dateWorking = sheetData[0][6]; //дата ведомости
+  //   dispatch(setDateWorking(dateWorking));
+  //   const code = sheetData[0][11]; //шифр объекта
+  //   dispatch(setNewCode(code));
+    
+  //   let headers = sheetData[6].slice(7, 18);
+  //   headers.splice(2, 1, 'Плотность песчаных грунтов', 'Плотность глинистых грунтов');
+  //   dispatch(setHeaders(headers));
+  //   // setHeaders(headers); //сделан дубликат в редакс это потом удалить
+    
+  //   const main_rows = sheetData.slice(9);
+  //   const usefulNumbers = number_rows(main_rows);
+  //   dispatch(setMainData(usefulNumbers));
+  //   // setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
+  //   const sheetName1 = workbook.SheetNames[1];
+  //   const sheet1 = workbook.Sheets[sheetName1];
+  //   const sheetData1 = XLSX.utils.sheet_to_json(sheet1, {header: 1});
+  //   const main_rows1 = sheetData1.slice(8);
+  //   const usefulNumbers1 = number_rows(main_rows1);
+  //   dispatch(setKbData([...usefulNumbers1])); //инфо с листа кор к бет
+
+  //   const sheetName2 = workbook.SheetNames[2];
+  //   const sheet2 = workbook.Sheets[sheetName2];
+  //   const sheetData2 = XLSX.utils.sheet_to_json(sheet2, {header: 1});
+  //   const main_rows2 = sheetData2.slice(8);
+  //   const usefulNumbers2 = number_rows(main_rows2);
+  //   dispatch(setKstData([...usefulNumbers2])); //инфо с листа кор к стали
+
+  //   const sheetName3 = workbook.SheetNames[3];
+  //   const sheet3 = workbook.Sheets[sheetName3];
+  //   const sheetData3 = XLSX.utils.sheet_to_json(sheet3, {header: 1});
+  //   const main_rows3 = sheetData3.slice(7);
+  //   const usefulNumbers3 = number_rows(main_rows3);
+  //   dispatch(setWaterData([...usefulNumbers3])); //инфо с листа вода
+
+  //   dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
+
+  //   headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
+  // };
     
   e.target.value = '';
 }
@@ -122,8 +191,6 @@ const cbLoad = e => {
   return (
     <div className="App">
       <input  type='file' onChange={cbLoad} />
-      {/* <div className='name-obj'>{nameObj}</div> */}
-      {/* {__html && <div dangerouslySetInnerHTML={{__html}}/>} */}
       {
         estimateStatus.estimateStatus && <Estimate />
       }

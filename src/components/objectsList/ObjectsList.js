@@ -3,35 +3,45 @@ import { WordProt } from "../word-prot/wordProt";
 import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { db } from "../firebase/init";
-import { getDocs, query, collection } from "firebase/firestore";
+import { getDocs, query, collection, where } from "firebase/firestore";
 import './objectsList.css';
 
 export const ObjectsList = () => {
 
     const [dataList, setDataList] = useState([]);
     const [waterData, setWaterData] = useState([]);
-    const [choosedYear, setChoosedYear] = useState('2024');
-    const [choosedMonth, setChoosedMonth] = useState('');
+    const [choosedYear, setChoosedYear] = useState('2025');
+    const [choosedMonth, setChoosedMonth] = useState('all');
+    const [represSum, setRepresSum] = useState(0);
 
     const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025'];
 
-    const listFromFire = async (year) => {
-        const q = query(collection(db, year));
+    const listFromFire = async (year, month) => {
+        // const q = query(collection(db, year));
+        let q;
+        if (month === 'all') {
+            q = query(collection(db, year));
+        } else {
+            q = query(collection(db, year), where('date', '>=', new Date(+year, +month)), where('date', '<', new Date(+year, +month+1)));
+        }
         const querySnapshot = await getDocs(q);
         const allArr = [];
+        let representedSum = 0;
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           const date = new Date(data?.date.seconds * 1000);
           const arrData = [data?.protocol, data?.code, date, data?.sum];
           allArr.push(arrData);
+          representedSum += +data?.sum;
         });
         setDataList([...allArr]);
+        setRepresSum(representedSum);
         return allArr;
     };
 
     useEffect(()=>{
-        listFromFire(choosedYear);
-    }, []);
+        listFromFire(choosedYear, choosedMonth);
+    }, [choosedYear, choosedMonth]);
 
     // const cbObjClick = (ev) => {
     //     const target = ev.target;
@@ -56,13 +66,14 @@ export const ObjectsList = () => {
         if (val === choosedYear) return;
         if (val) {
             setChoosedYear(String(val));
-            listFromFire(String(val));
+            setChoosedMonth('all');
+            // listFromFire(String(val));
         } 
     };
 
     const cbChangeMonth = (e) => {
         const val = e.target.value;
-        if (val === choosedYear) return;
+        if (val === choosedMonth) return;
         if (val) {
             setChoosedMonth(val);
         } 
@@ -74,15 +85,17 @@ export const ObjectsList = () => {
 
     const dataListShow = dataList.map((i, ind) => {
         return (
-            <div key={ind} className="main-list" >
-                <div className="main-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
-                <div className="main-list-obj" value={i[0]}>{i[1]}</div>
-                <div className="main-list-obj" value={i[0]}>{i[3]}</div>
-                <div className="main-list-obj" value={i[0]}>
-                    <WordProt protName={i[0]} protYear={i[2]?.getFullYear()}/>
-                </div>
-                <div className="main-list-obj" value={i[0]}>
-                    <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
+            <div key={ind} className="objects-list-data" >
+                <div className="objects-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
+                <div className="objects-list-obj" value={i[0]}>{i[1]}</div>
+                <div className="objects-list-obj" value={i[0]}>{i[3]}</div>
+                <div>
+                    <div className="objects-list-obj" value={i[0]}>
+                        <WordProt protName={i[0]} protYear={i[2]?.getFullYear()}/>
+                    </div>
+                    <div className="objects-list-obj" value={i[0]}>
+                        <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
+                    </div>
                 </div>
             </div>
         )
@@ -95,8 +108,8 @@ export const ObjectsList = () => {
                 <select value={choosedYear} onChange={cbChangeYear}>
                    {yearsList}
                 </select>
-                <select onChange={cbChangeMonth}>
-                    <option value=''>Весь год</option>
+                <select onChange={cbChangeMonth} value={choosedMonth}>
+                    <option value='all'>Весь год</option>
                     <option value={0}>Январь</option>
                     <option value={1}>Февраль</option>
                     <option value={2}>Март</option>
@@ -111,15 +124,18 @@ export const ObjectsList = () => {
                     <option value={11}>Декабрь</option>
                 </select>
             </div>
+            <div className="objects-list-sum-filtered">
+                <span>Сумма за период: {represSum} руб.</span>
+            </div>
             <div>
                 <ComplexEstimate choosedYear={choosedYear} choosedMonth={choosedMonth}/>
             </div>
             <div className="objects-list">
-                <div className="main-list">
-                    <div className="main-list-obj">Номер протокола</div>
-                    <div className="main-list-obj">Номер объекта</div>
-                    <div className="main-list-obj">Сумма по смете</div>
-                    <div className="main-list-obj">Действия</div>
+                <div className="objects-list-header">
+                    <div className="objects-list-header-obj">Номер протокола</div>
+                    <div className="objects-list-header-obj">Номер объекта</div>
+                    <div className="objects-list-header-obj">Сумма по смете</div>
+                    <div className="objects-list-header-obj">Действия</div>
                 </div>
                 {dataListShow}
             </div>
