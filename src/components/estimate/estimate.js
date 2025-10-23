@@ -114,55 +114,6 @@ export const Estimate = (props) => {
     // console.log('render');
     return (
         <div>
-                 {isExistObj && <div>{isExistStatus}</div>}
-                 {/* <div className="estimate-descr">
-                    <div>{codeFromRed.code}</div>
-                    <div>{description.description}</div>
-                </div> */}
-                 {/* {headers.headers.length > 0 && table && 
-                     <div className="table-brd">
-                         <table className="estimate-table">
-                             <thead>
-                                 <tr>
-                                     <td/>
-                                     {head}
-                                 </tr>
-                             </thead>
-                             <tbody>
-                                 <tr>
-                                     <td>Количество</td>
-                                     {quanList}
-                                 </tr>
-                                 <tr>
-                                     <td>Цена за ед.</td>
-                                     {priceList}
-                                 </tr>
-                                 <tr>
-                                     <td>Сумма</td>
-                                     {sum}
-                                 </tr>
-                                 <tr>
-                                     <td>Итого с учетом коэффициентов на январь 2017</td>
-                                     <td>{summma2017}</td>
-                                 </tr>
-                                 <tr>
-                                     <td>Итого с учетом коэффициентов на текущий месяц</td>
-                                     <td>{sumRes}</td>
-                                 </tr>
-                             </tbody>
-                         </table>
-                         <div className={`close-btn`} onClick={cbCloseComp}>
-                             <img src={closeImg} alt='close' />
-                         </div>
-                     </div>
-                 } */}
-                 {/* {
-                     headers.headers.length > 0 &&
-                     <div className="estimate-buttons">
-                         <ExportXLSX sum2017={sum2017} sumRes={sumRes} code={codeFromRed.code}/>
-                         <Link to={`/wet-calc`}>Рассчитать влажность</Link>
-                     </div>
-                 } */}
         </div>
     )
 }

@@ -3,7 +3,8 @@ import { WordProt } from "../word-prot/wordProt";
 import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { db } from "../firebase/init";
-import { getDocs, query, collection, where } from "firebase/firestore";
+import { getDocs, query, collection, where, getDoc, doc } from "firebase/firestore";
+import { EstimateTable } from "../estimate-table/EstimateTable";
 import './objectsList.css';
 
 export const ObjectsList = () => {
@@ -13,6 +14,8 @@ export const ObjectsList = () => {
     const [choosedYear, setChoosedYear] = useState('2025');
     const [choosedMonth, setChoosedMonth] = useState('all');
     const [represSum, setRepresSum] = useState(0);
+    const [showTable, setShowTable] = useState(false);
+    const [clickedProt, setClickedProt] = useState('');
 
     const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025'];
 
@@ -56,7 +59,6 @@ export const ObjectsList = () => {
         const allArr = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          console.log('data: ', data.waterData);
         });
         // return allArr;
     };
@@ -83,9 +85,17 @@ export const ObjectsList = () => {
         return <option key={ind} value={year}>{year}</option>
     });
 
-    const dataListShow = dataList.map((i, ind) => {
+    const cbShowTable = (e) => {
+        const targ = e.target;
+        setShowTable(!showTable);
+        const keyOfObj = targ.getAttribute('value');
+        if (keyOfObj !== clickedProt) setClickedProt(keyOfObj);
+    }
+
+    const dataListShow = dataList.map( i => {
+        console.log(clickedProt, i[0]);
         return (
-            <div key={ind} className="objects-list-data" >
+            <div key={i[0]} className="objects-list-data" onClick={cbShowTable} value={i[0]}>
                 <div className="objects-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
                 <div className="objects-list-obj" value={i[0]}>{i[1]}</div>
                 <div className="objects-list-obj" value={i[0]}>{i[3]}</div>
@@ -97,6 +107,7 @@ export const ObjectsList = () => {
                         <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
                     </div>
                 </div>
+                {showTable && clickedProt === String(i[0]) && <div><EstimateTable clickedProt={clickedProt} choosedYear={choosedYear} /></div>}
             </div>
         )
     });
