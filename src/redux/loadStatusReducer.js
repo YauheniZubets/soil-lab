@@ -3,35 +3,34 @@ import { createSlice } from '@reduxjs/toolkit';
 //   addObjectRequested, addOneObjectSucceeded,
 //   addAllObjectsSucceeded, addObjectFailed
 // } from '../saga/actions';
+import { ADD_OBJECT_REQUESTED } from '../saga/actions';
 
 const initialState = {
   loadStatus: '',
-  loadQuan: 0,
-  loadALLStatus: '',
-  loading: false,
-  error: null,
+  isExist: false
 };
 
 export const loadStatus = createSlice({
   name: 'loadStatus',
   initialState,
   reducers: {
-    setLoadQuan: (state, action) => {
-      state.loadQuan = action.payload;
-    },
     addObjectRequested: (state) => {
-      state.loadStatus = 'start-loading';
-      state.loading = true;
-    }, 
-    addOneObjectSucceeded: (state, action) => {
-      state.loadQuan = action.payload--;
-      state.loadStatus = `one of ${state.loadQuan} loaded`;
-      
+      state.loadStatus = 'load-start';
+      state.isExist = false;
+    },
+    isObjectExist: (state) => {
+      state.isExist = true;
+    },
+    addObjectSucceeded: (state) => {
+      state.loadStatus = 'load-success';
+    },
+    addObjectError: (state) => {
+      state.loadStatus = 'load-error';
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setLoadQuan, addObjectRequested, addOneObjectSucceeded } = loadStatus.actions
+export const { setLoadQuan, addObjectRequested, addObjectSucceeded, addObjectError, isObjectExist } = loadStatus.actions
 
 export default loadStatus.reducer;

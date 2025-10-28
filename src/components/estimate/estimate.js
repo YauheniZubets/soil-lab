@@ -103,7 +103,12 @@ export const Estimate = (props) => {
 
     useEffect(() => {
         if (codeFromRed.code) {
-            getSumIfExist();
+            try {
+                getSumIfExist();
+            } catch (error) {
+                console.log('error: ', error);
+            }
+           
         }
     }, [codeFromRed.code]);
 

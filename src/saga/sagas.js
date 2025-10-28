@@ -1,21 +1,17 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
-// import {
-//   ADD_OBJECT_REQUESTED,
-//   addObjectRequested,
-//   addOneObjectSucceeded,
-//   addAllObjectsSucceeded,
-//   addObjectFailed
-// } from './actions';
-import { addObjectRequested, addOneObjectSucceeded } from '../redux/loadStatusReducer';
+import { ADD_OBJECT_REQUESTED } from './actions';
+import { addObjectRequested, addObjectSucceeded, addObjectError, isObjectExist } from '../redux/loadStatusReducer';
 import { db } from "../components/firebase/init";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import ExcelDateToJSDate from '../base-data/convertDate';
+import { sumBase, sumWithComp, sum2017, sumCur } from '../base-data/calc-price';
+import { price } from '../base-data/price';
 
 // import { writeSumInFire, getSumIfExist } from './api';
 
 const writeSumInFire = async (year, protFromRed, codeFromRed, date, sumRes, waterData, allQuan) => {
   try {
-      const docRef = await setDoc(doc(db, `${year}`, String(protFromRed)), {
+      await setDoc(doc(db, `${year}`, String(protFromRed)), {
           protocol: protFromRed,
           code: codeFromRed,
           date: date,
@@ -28,22 +24,20 @@ const writeSumInFire = async (year, protFromRed, codeFromRed, date, sumRes, wate
   }
 };
 
-const getSumIfExist = async (estimateYear, protocol) => {
-  const docRef = doc(db, `${estimateYear}`, String(protocol));
+const getSumIfExist = async (protFromRed, year) => {
+  const docRef = doc(db, `${year}`, String(protFromRed));
   const docSnap = await getDoc(docRef);
-  const resCode = await docSnap.data()?.code;
-  return resCode;
-  // if (resCode === codeFromRed.code) {
-  //     console.log('Уже в базе');
-  // } else {
-  //     writeSumInFire();
-  // }
+  const resCode = await docSnap.data()?.protocol;
+  if (resCode === protFromRed) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 const getProtocolFromRed = state => state.protocol;
 const getCodeFromRed = state => state.code;
 const getDateFromRed = state => state.dateWorking;
-const getSumFromRed = state => state.sumRes;
 const getWaterFromRed = state => state.waterData;
 const getAllQuanFromRed = state => state.allQuan;
 const getLoadStatusFromRed = state => state.loadStatus;
@@ -51,11 +45,9 @@ const getLoadStatusFromRed = state => state.loadStatus;
 function* addObjectSaga() {
     const protocolFromRed = yield select(getProtocolFromRed);
     const codeFromRed = yield select(getCodeFromRed);
-    const sumFromRed = yield select(getSumFromRed);
     const dateFromRed = yield select(getDateFromRed);
     const waterDateFromRed = yield select(getWaterFromRed);
     const allQuanFromRed = yield select(getAllQuanFromRed);
-    const loadStatusFromRed = yield select(getLoadStatusFromRed);
     
     const dateNormalized = ExcelDateToJSDate(dateFromRed.dateWorking);
     const estimateYear = dateNormalized.getFullYear();
@@ -65,20 +57,25 @@ function* addObjectSaga() {
       return ob;
     });
 
+    const sum = sumBase(allQuanFromRed.allQuan, price);
+    const sumComputed = sumWithComp(sum);
+    const summma2017 = sum2017(sumComputed);
+    const sumRes = sumCur(summma2017);
+
     try {
-        const resCode = yield call(getSumIfExist(estimateYear, protocolFromRed.protocol)); // Call your API function
-        if (resCode === codeFromRed.code) {
-          console.log('Уже в базе');
+        yield put(addObjectRequested());
+        const result = yield call(getSumIfExist, protocolFromRed.protocol, estimateYear); 
+        if (result) {
+          yield put(isObjectExist());
         } else {
-          yield call(writeSumInFire(estimateYear, protocolFromRed.protocol, codeFromRed.code, dateNormalized, sumFromRed.sumRes, waterDataNoNested, allQuanFromRed.allQuan));
-          yield put(addOneObjectSucceeded(loadStatusFromRed.loadQuan));
+          yield call(writeSumInFire, estimateYear, protocolFromRed.protocol, codeFromRed.code, dateNormalized, sumRes, waterDataNoNested, allQuanFromRed.allQuan);
+          yield put(addObjectSucceeded());
         }
-        // yield put(addAllObjectsSucceeded());
     } catch (error) {
-        // yield put(addObjectFailed(error.message));
+        yield put(addObjectError());
     }
 }
 
 export function* rootSaga() {
-  yield takeEvery(addObjectRequested(), addObjectSaga);
+  yield takeEvery(ADD_OBJECT_REQUESTED, addObjectSaga);
 }

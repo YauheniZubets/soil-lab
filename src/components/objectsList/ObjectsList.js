@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { WordProt } from "../word-prot/wordProt";
 import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
@@ -16,6 +17,9 @@ export const ObjectsList = () => {
     const [represSum, setRepresSum] = useState(0);
     const [showTable, setShowTable] = useState(false);
     const [clickedProt, setClickedProt] = useState('');
+
+    const loadStatus = useSelector(state => state.loadStatus);
+    console.log('loadStatus: ', loadStatus);
 
     const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025'];
 
@@ -93,7 +97,6 @@ export const ObjectsList = () => {
     }
 
     const dataListShow = dataList.map( i => {
-        console.log(clickedProt, i[0]);
         return (
             <div key={i[0]} className="objects-list-data" onClick={cbShowTable} value={i[0]}>
                 <div className="objects-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
@@ -134,6 +137,7 @@ export const ObjectsList = () => {
                     <option value={10}>Ноябрь</option>
                     <option value={11}>Декабрь</option>
                 </select>
+                {loadStatus.isExist && <span>Уже в базе</span>}
             </div>
             <div className="objects-list-sum-filtered">
                 <span>Сумма за период: {represSum} руб.</span>

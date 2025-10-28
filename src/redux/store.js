@@ -1,4 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
+import { rootSaga } from '../saga/sagas';
 
 import codeReducer from './codeReducer';
 import protocolReducer from './protocolReducer';
@@ -15,6 +17,7 @@ import headersReducer from './headersReducer';
 import loadStatusReducer from './loadStatusReducer';
 import sumReducer from './sumReducer';
 
+const sagaMiddleware = createSagaMiddleware();
 
 export const store = configureStore({
     reducer: {
@@ -33,5 +36,8 @@ export const store = configureStore({
       loadStatus: loadStatusReducer, //статус загрузки
       sumRes: sumReducer
     },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware),
   }, 
 );
+
+sagaMiddleware.run(rootSaga);

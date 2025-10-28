@@ -16,7 +16,7 @@ import { setAllQuan } from './redux/allQuanReducer';
 import { setEstimateStatus } from './redux/closeEstimateReducer';
 import { setNewDescription } from './redux/descrReducer';
 import { setHeaders } from './redux/headersReducer';
-import { setLoadQuan, addObjectRequested } from './redux/loadStatusReducer';
+import { addObjectRequested } from './saga/actions';
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -114,6 +114,7 @@ const gettingMainDataFromInp = (addingFile) => {
     dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
 
     headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
+    dispatch(addObjectRequested());
   };
 };
 
@@ -191,9 +192,9 @@ const cbLoad = e => {
   return (
     <div className="App">
       <input  type='file' onChange={cbLoad} />
-      {
+      {/* {
         estimateStatus.estimateStatus && <Estimate />
-      }
+      } */}
       <ObjectsList />
     </div>
   );
