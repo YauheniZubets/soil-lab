@@ -16,6 +16,11 @@
 .objects-list > div:nth-child(even) {
     background-color: greenyellow;
 }
+.Pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 /* .main-list { */
     /* display: flex; */
     /* border: solid 3px greenyellow; */

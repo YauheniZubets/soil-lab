@@ -6,8 +6,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ADD_OBJECT_REQUESTED } from '../saga/actions';
 
 const initialState = {
-  loadStatus: '',
-  isExist: false
+  isLoading: false,
+  isExist: false,
+  objLoaded: false
 };
 
 export const loadStatus = createSlice({
@@ -15,17 +16,20 @@ export const loadStatus = createSlice({
   initialState,
   reducers: {
     addObjectRequested: (state) => {
-      state.loadStatus = 'load-start';
+      state.isLoading = true;
       state.isExist = false;
+      state.objLoaded = false;
     },
     isObjectExist: (state) => {
       state.isExist = true;
+      state.isLoading = false;
     },
     addObjectSucceeded: (state) => {
-      state.loadStatus = 'load-success';
+      state.isLoading = false;
+      state.objLoaded = true;
     },
     addObjectError: (state) => {
-      state.loadStatus = 'load-error';
+      state.isLoading = false;
     },
   },
 })

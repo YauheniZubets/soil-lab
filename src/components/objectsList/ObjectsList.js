@@ -4,8 +4,9 @@ import { WordProt } from "../word-prot/wordProt";
 import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { db } from "../firebase/init";
-import { getDocs, query, collection, where, getDoc, doc } from "firebase/firestore";
+import { getDocs, query, collection, where, getDoc, doc, limit, startAfter } from "firebase/firestore";
 import { EstimateTable } from "../estimate-table/EstimateTable";
+import { PaginationRounded } from "../pagination/Pagination";
 import './objectsList.css';
 
 export const ObjectsList = () => {
@@ -17,21 +18,27 @@ export const ObjectsList = () => {
     const [represSum, setRepresSum] = useState(0);
     const [showTable, setShowTable] = useState(false);
     const [clickedProt, setClickedProt] = useState('');
+    const [page, setPage] = useState(1);
+    const [pageSnap, setPageSnap] = useState(null);
 
     const loadStatus = useSelector(state => state.loadStatus);
-    console.log('loadStatus: ', loadStatus);
 
     const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025'];
-
+    
+    //!!!!!!длина массива для пагинатора
+    // !!! подргружает только 10, и сумма только загруженных 10 объектов
+    
     const listFromFire = async (year, month) => {
-        // const q = query(collection(db, year));
         let q;
         if (month === 'all') {
             q = query(collection(db, year));
         } else {
-            q = query(collection(db, year), where('date', '>=', new Date(+year, +month)), where('date', '<', new Date(+year, +month+1)));
+            q = query(collection(db, year), 
+            where('date', '>=', new Date(+year, +month)), 
+            where('date', '<', new Date(+year, +month+1)));
         }
         const querySnapshot = await getDocs(q);
+        const lastVisible = querySnapshot.docs[querySnapshot.docs.length-1]; // для пагинации послед страница отображения
         const allArr = [];
         let representedSum = 0;
         querySnapshot.forEach((doc) => {
@@ -48,7 +55,7 @@ export const ObjectsList = () => {
 
     useEffect(()=>{
         listFromFire(choosedYear, choosedMonth);
-    }, [choosedYear, choosedMonth]);
+    }, [choosedYear, choosedMonth, loadStatus.objLoaded]);
 
     // const cbObjClick = (ev) => {
     //     const target = ev.target;
@@ -57,7 +64,6 @@ export const ObjectsList = () => {
     // };
 
     const cbDownloadWater = async () => {
-        console.log('click');
         const q = query(collection(db, "works"));
         const querySnapshot = await getDocs(q);
         const allArr = [];
@@ -94,25 +100,34 @@ export const ObjectsList = () => {
         setShowTable(!showTable);
         const keyOfObj = targ.getAttribute('value');
         if (keyOfObj !== clickedProt) setClickedProt(keyOfObj);
+    };
+
+    const changePage = (pageFromPagination) => {
+        if (pageFromPagination !== page) setPage(pageFromPagination);
     }
 
-    const dataListShow = dataList.map( i => {
-        return (
-            <div key={i[0]} className="objects-list-data" onClick={cbShowTable} value={i[0]}>
-                <div className="objects-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
-                <div className="objects-list-obj" value={i[0]}>{i[1]}</div>
-                <div className="objects-list-obj" value={i[0]}>{i[3]}</div>
-                <div>
-                    <div className="objects-list-obj" value={i[0]}>
-                        <WordProt protName={i[0]} protYear={i[2]?.getFullYear()}/>
+    const itemsPerPage = 10;
+    const indexOfLast = page * itemsPerPage;
+    const indexOfFirst = indexOfLast - itemsPerPage;
+    const dataListShow = dataList.map( (i, ind) => {
+        if (ind >= indexOfFirst && ind < indexOfLast) {
+            return (
+                <div key={i[0]} className="objects-list-data" onClick={cbShowTable} value={i[0]}>
+                    <div className="objects-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
+                    <div className="objects-list-obj" value={i[0]}>{i[1]}</div>
+                    <div className="objects-list-obj" value={i[0]}>{i[3]}</div>
+                    <div>
+                        <div className="objects-list-obj" value={i[0]}>
+                            <WordProt protName={i[0]} protYear={i[2]?.getFullYear()}/>
+                        </div>
+                        <div className="objects-list-obj" value={i[0]}>
+                            <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
+                        </div>
                     </div>
-                    <div className="objects-list-obj" value={i[0]}>
-                        <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
-                    </div>
+                    {showTable && clickedProt === String(i[0]) && <div><EstimateTable clickedProt={clickedProt} choosedYear={choosedYear} /></div>}
                 </div>
-                {showTable && clickedProt === String(i[0]) && <div><EstimateTable clickedProt={clickedProt} choosedYear={choosedYear} /></div>}
-            </div>
-        )
+            )
+        }
     });
 
     return (
@@ -153,6 +168,9 @@ export const ObjectsList = () => {
                     <div className="objects-list-header-obj">Действия</div>
                 </div>
                 {dataListShow}
+            </div>
+            <div className="Pagination">
+                <PaginationRounded pageFunc={changePage} itemsPerPage={itemsPerPage} totalItems={dataList.length || 10} />
             </div>
         </div>
         

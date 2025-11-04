@@ -17,13 +17,14 @@ import { setEstimateStatus } from './redux/closeEstimateReducer';
 import { setNewDescription } from './redux/descrReducer';
 import { setHeaders } from './redux/headersReducer';
 import { addObjectRequested } from './saga/actions';
+import { Preloader } from './components/preloader/preloader';
 import { Link } from 'react-router-dom';
 
 function App() {
 
 const dispatch = useDispatch();
 const estimateStatus = useSelector(state=>state.closeEstimate);
-const loadQuan = useSelector(state => state.loadStatus.loadQuan);
+const loadStatus = useSelector(state => state.loadStatus);
 
 function number_rows( main_rows) {
   return main_rows.filter(el => Number.isInteger(el[0] && el[1]))
@@ -114,7 +115,8 @@ const gettingMainDataFromInp = (addingFile) => {
     dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
 
     headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
-    dispatch(addObjectRequested());
+
+    dispatch(addObjectRequested()); // вместо компонента estimate
   };
 };
 
@@ -191,6 +193,7 @@ const cbLoad = e => {
 
   return (
     <div className="App">
+      {loadStatus.isLoading && <Preloader />}
       <input  type='file' onChange={cbLoad} />
       {/* {
         estimateStatus.estimateStatus && <Estimate />
