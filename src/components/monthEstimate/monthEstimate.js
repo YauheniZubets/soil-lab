@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { price } from '../../base-data/price';
 import { db } from "../firebase/init";
-import { doc, getDoc, query, collection } from "firebase/firestore";
+import { doc, getDocs, query, collection, where } from "firebase/firestore";
 import * as ExcelJS from 'exceljs';
 
-export const EachObjEstimate = (props) => {
+export const MonthEstimate = (props) => {
 
-  const {protName, protYear} = props;
+  const {choosedYear, choosedMonth} = props;
 
   const [allQuan, setAllQuan] = useState([]);
   const [dateFired, setDateFired] = useState('');
@@ -18,24 +18,46 @@ export const EachObjEstimate = (props) => {
   const [summa2017, setSumma2017] = useState('');
   const [sumRes, setSumRes] = useState('');
 
+  const [dataList, setDataList] = useState([]);
+  const [represSum, setRepresSum] = useState(0);
+
   const headers = useSelector(state=>state.headersData); //показатели с редакс
 
-  const downloadEstimateData = async (prot, year) => { //загрузка с бд
-    const docRef = doc(db, String(year), String(prot));
-    const docSnap = await getDoc(docRef); //получаем один документ вместо всей коллекции
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      setDateFired(new Date(data.date.seconds * 1000));
-      setCodeFired(data.code);
-      setProtFired(data.protocol);
-      setSumFromWork(data.sumFromWork);
-      setSumComputed(data.sumComputed);
-      setSumma2017(data.summa2017);
-      setSumRes(data.sum);
-      const allQuan = data.allQuan;
-      setAllQuan(allQuan);
-    };
-  };
+  const downloadEstimateData = async (choosedYear, choosedMonth) => {
+    let q = query(collection(db, choosedYear), 
+        where('date', '>=', new Date(+choosedYear, +choosedMonth)), 
+        where('date', '<', new Date(+choosedYear, +choosedMonth+1)));
+    const querySnapshot = await getDocs(q);
+    const allArr = [];
+    let representedSum = 0;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const date = new Date(data?.date.seconds * 1000);
+      const arrData = [data?.protocol, data?.code, date, data?.sum];
+      allArr.push(arrData);
+      representedSum += +data?.sum;
+    });
+    setDataList([...allArr]);
+    setRepresSum(representedSum.toFixed(2));
+    return allArr;
+};
+
+  // const downloadEstimateData = async (prot, year) => { //загрузка с бд
+  //   const docRef = doc(db, String(year), String(prot));
+  //   const docSnap = await getDoc(docRef); //получаем один документ вместо всей коллекции
+  //   if (docSnap.exists()) {
+  //     const data = docSnap.data();
+  //     setDateFired(new Date(data.date.seconds * 1000));
+  //     setCodeFired(data.code);
+  //     setProtFired(data.protocol);
+  //     setSumFromWork(data.sumFromWork);
+  //     setSumComputed(data.sumComputed);
+  //     setSumma2017(data.summa2017);
+  //     setSumRes(data.sum);
+  //     const allQuan = data.allQuan;
+  //     setAllQuan(allQuan);
+  //   };
+  // };
 
   useEffect(()=> {
     if (allQuan.length > 0) saveExcEst(); // проверка на длину массива количесвтва и потом скачивание
@@ -57,16 +79,7 @@ export const EachObjEstimate = (props) => {
     return arr;
   };
 
-  // const sumBase = (allQuan) => {
-  //   let sum = 0;
-  //   for (let i = 0; i < price.length; i++) {
-  //     const element = price[i];
-  //     sum += allQuan[i] * element['price'];
-  //   }
-  //   return sum;
-  // }
-
-  const cbSave = (e) => downloadEstimateData(protName, protYear);
+  const cbSave = (e) => downloadEstimateData(choosedYear, choosedMonth);
 
   const saveExcEst = () => {
     const downloadExcel = () => {
@@ -91,7 +104,7 @@ export const EachObjEstimate = (props) => {
       ];
       const row1 = worksheet.addRow(); // название
       worksheet.mergeCells('A1:G1');
-      row1.getCell(1).value = 'Сметный расчет';
+      row1.getCell(1).value = `Сметный расчет за ${choosedMonth}`;
       row1.font = {
         name: 'Times New Roman',
         color: { argb: 'black' },
@@ -111,89 +124,89 @@ export const EachObjEstimate = (props) => {
       };
       row2.alignment ={ horizontal: 'center' };
 
-      const row21 = worksheet.addRow(); // шифр и протокол
-      row21.getCell(1).value = `Шифр объекта: ${codeFired}`;
-      row21.getCell(3).value = `Протокол: ${protFired}п/${new Date(dateFired).getFullYear()}`;
-      row21.font = {
-        name: 'Times New Roman',
-        color: { argb: 'black' },
-        size: 12,
-        bold: true
-      };
+      // const row21 = worksheet.addRow(); // шифр и протокол
+      // row21.getCell(1).value = `Шифр объекта: ${codeFired}`;
+      // row21.getCell(3).value = `Протокол: ${protFired}п/${new Date(dateFired).getFullYear()}`;
+      // row21.font = {
+      //   name: 'Times New Roman',
+      //   color: { argb: 'black' },
+      //   size: 12,
+      //   bold: true
+      // };
 
-      const row3 = worksheet.addRow(); // название
-      row3.font = {
-        name: 'Times New Roman',
-        color: { argb: 'black' },
-        size: 12,
-      };
-      row3.getCell(1).value = '№ п/п';
-      worksheet.getCell('A4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'},
-      };
-      worksheet.getCell('A4').alignment = {
-        wrapText: true
-      };
-      row3.getCell(2).value = 'Вид работ';
-      worksheet.getCell('B4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'}
-      };
-      row3.getCell(3).value = '№ част. глав табл. и пункт. указ. к разд. или главе СБЦ';
-      worksheet.getCell('C4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'},
-      };
-      worksheet.getCell('C4').alignment = {
-        wrapText: true
-      };
-      row3.getCell(4).value = 'Расценка (тыс. руб.)';
-      worksheet.getCell('D4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'},
-      };
-      worksheet.getCell('D4').alignment = {
-        wrapText: true
-      };
-      row3.getCell(5).value = 'Кол-во образцов';
-      worksheet.getCell('E4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'},
-      };
-      worksheet.getCell('E4').alignment = {
-        wrapText: true
-      };
-      row3.getCell(6).value = 'Коэф-т';
-      worksheet.getCell('F4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'},
-      };
-      worksheet.getCell('F4').alignment = {
-        wrapText: true
-      };
-      row3.getCell(7).value = 'Стоимость (тыс. руб.)';
-      worksheet.getCell('G4').border = {
-        top: {style:'thin'},
-        left: {style:'thin'},
-        bottom: {style:'thin'},
-        right: {style:'thin'},
-      };
-      worksheet.getCell('G4').alignment = {
-        wrapText: true
-      };
+      // const row3 = worksheet.addRow(); // название
+      // row3.font = {
+      //   name: 'Times New Roman',
+      //   color: { argb: 'black' },
+      //   size: 12,
+      // };
+      // row3.getCell(1).value = '№ п/п';
+      // worksheet.getCell('A4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'},
+      // };
+      // worksheet.getCell('A4').alignment = {
+      //   wrapText: true
+      // };
+      // row3.getCell(2).value = 'Вид работ';
+      // worksheet.getCell('B4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'}
+      // };
+      // row3.getCell(3).value = '№ част. глав табл. и пункт. указ. к разд. или главе СБЦ';
+      // worksheet.getCell('C4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'},
+      // };
+      // worksheet.getCell('C4').alignment = {
+      //   wrapText: true
+      // };
+      // row3.getCell(4).value = 'Расценка (тыс. руб.)';
+      // worksheet.getCell('D4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'},
+      // };
+      // worksheet.getCell('D4').alignment = {
+      //   wrapText: true
+      // };
+      // row3.getCell(5).value = 'Кол-во образцов';
+      // worksheet.getCell('E4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'},
+      // };
+      // worksheet.getCell('E4').alignment = {
+      //   wrapText: true
+      // };
+      // row3.getCell(6).value = 'Коэф-т';
+      // worksheet.getCell('F4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'},
+      // };
+      // worksheet.getCell('F4').alignment = {
+      //   wrapText: true
+      // };
+      // row3.getCell(7).value = 'Стоимость (тыс. руб.)';
+      // worksheet.getCell('G4').border = {
+      //   top: {style:'thin'},
+      //   left: {style:'thin'},
+      //   bottom: {style:'thin'},
+      //   right: {style:'thin'},
+      // };
+      // worksheet.getCell('G4').alignment = {
+      //   wrapText: true
+      // };
 
       const dataRows = worksheet.addRows(pricePoints(allQuan));
       for (const row of dataRows) {
@@ -315,7 +328,7 @@ export const EachObjEstimate = (props) => {
 
   return (
       <div>
-          <button onClick={cbSave}>Cмета объекта</button>
+          <button onClick={cbSave}>Смета за месяц</button>
       </div>
   )
 }

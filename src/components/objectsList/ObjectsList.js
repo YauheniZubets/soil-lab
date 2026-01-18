@@ -6,6 +6,7 @@ import { ComplexEstimate } from "../complexEstimate/complexEstimate";
 import { db } from "../firebase/init";
 import { getDocs, query, collection, where, getDoc, doc, limit, startAfter } from "firebase/firestore";
 import { EstimateTable } from "../estimate-table/EstimateTable";
+import { MonthEstimate } from "../monthEstimate/monthEstimate";
 import { PaginationRounded } from "../pagination/Pagination";
 import './objectsList.css';
 
@@ -13,7 +14,7 @@ export const ObjectsList = () => {
 
     const [dataList, setDataList] = useState([]);
     const [waterData, setWaterData] = useState([]);
-    const [choosedYear, setChoosedYear] = useState('2025');
+    const [choosedYear, setChoosedYear] = useState('2026');
     const [choosedMonth, setChoosedMonth] = useState('all');
     const [represSum, setRepresSum] = useState(0);
     const [showTable, setShowTable] = useState(false);
@@ -23,7 +24,7 @@ export const ObjectsList = () => {
 
     const loadStatus = useSelector(state => state.loadStatus);
 
-    const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025'];
+    const yearsListArr = ['2020', '2021', '2022', '2023', '2024', '2025', '2026'];
     
     //!!!!!!длина массива для пагинатора
     // !!! подргружает только 10, и сумма только загруженных 10 объектов
@@ -49,19 +50,13 @@ export const ObjectsList = () => {
           representedSum += +data?.sum;
         });
         setDataList([...allArr]);
-        setRepresSum(representedSum);
+        setRepresSum(representedSum.toFixed(2));
         return allArr;
     };
 
     useEffect(()=>{
         listFromFire(choosedYear, choosedMonth);
     }, [choosedYear, choosedMonth, loadStatus.objLoaded]);
-
-    // const cbObjClick = (ev) => {
-    //     const target = ev.target;
-    //     const prot = +target.getAttribute('value');
-    //     console.log('target: ', target.getAttribute('value'));
-    // };
 
     const cbDownloadWater = async () => {
         const q = query(collection(db, "works"));
@@ -116,7 +111,7 @@ export const ObjectsList = () => {
                     <div className="objects-list-obj" value={i[0]}>{`${i[0]}п/${i[2]?.getFullYear()}`}</div>
                     <div className="objects-list-obj" value={i[0]}>{i[1]}</div>
                     <div className="objects-list-obj" value={i[0]}>{i[3]}</div>
-                    <div>
+                    <div className="container-buttons">
                         <div className="objects-list-obj" value={i[0]}>
                             <WordProt protName={i[0]} protYear={i[2]?.getFullYear()}/>
                         </div>
@@ -153,6 +148,9 @@ export const ObjectsList = () => {
                     <option value={11}>Декабрь</option>
                 </select>
                 {loadStatus.isExist && <span>Уже в базе</span>}
+                <div className="objects-list-month-estimate">
+                    {choosedMonth !== 'all' && <MonthEstimate choosedYear={choosedYear} choosedMonth={choosedMonth} />}
+                </div>
             </div>
             <div className="objects-list-sum-filtered">
                 <span>Сумма за период: {represSum} руб.</span>
@@ -164,7 +162,7 @@ export const ObjectsList = () => {
                 <div className="objects-list-header">
                     <div className="objects-list-header-obj">Номер протокола</div>
                     <div className="objects-list-header-obj">Номер объекта</div>
-                    <div className="objects-list-header-obj">Сумма по смете</div>
+                    <div className="objects-list-header-obj">Сумма по смете, руб</div>
                     <div className="objects-list-header-obj">Действия</div>
                 </div>
                 {dataListShow}

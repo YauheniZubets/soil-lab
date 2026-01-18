@@ -1,17 +1,28 @@
-.objects-list {
+.objects-list-main {
+    height: 95vh;
+    position: relative;
 }
 .objects-list-header {
     display: grid;
-    grid-template-columns: 10% auto auto auto;
+    grid-template-columns: 10% 15% 15% auto;
     gap: 5px;
 }
 .objects-list-header-obj {
     background: fixed grey;
+    text-align: center;
 }
 .objects-list-data {
     display: grid;
-    grid-template-columns: auto auto auto auto;
-    grid-template-rows: auto;
+    grid-template-columns: 10% 15% 15% auto;
+    gap: 5px;
+}
+.objects-list-data:hover {
+    transform: scale(1.01);
+    cursor: pointer;
+}
+.objects-list-obj {
+    text-align: center;
+    padding: 0.5% 0 0.5% 0;
 }
 .objects-list > div:nth-child(even) {
     background-color: greenyellow;
@@ -20,6 +31,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+}
+.container-buttons {
+    text-align: justify;
+}
+.container-buttons div {
+    display: inline-block;
+    zoom: 1;
+    vertical-align: top;
+}
+.objects-list-month-estimate {
+    display: inline-block;
+    margin-left: 3px;
 }
 /* .main-list { */
     /* display: flex; */
