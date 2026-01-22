@@ -11,4 +11,4 @@ export const sumWithComp = (summaBase) => (summaBase * 1.2).toFixed(2);
 
 export const sum2017 = (summaWithComp) => (summaWithComp * 1000 * 0.00013164 * 1.0914).toFixed(2);
 
-export const sumCur = (summa2017, lastFactorByCurMonth) => (summa2017 * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.0076 * lastFactorByCurMonth).toFixed(2);
+export const sumCur = (summa2017, lastFactorByCurMonth) => (summa2017 * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.1402 * 1.1735 * lastFactorByCurMonth).toFixed(2);

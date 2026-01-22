@@ -33,11 +33,12 @@ export const MonthEstimate = (props) => {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const date = new Date(data?.date.seconds * 1000);
-      const arrData = [data?.protocol, data?.code, date, data?.sum];
+      const arrData = [data?.protocol, data?.code, date, data?.sum, data?.allQuan];
       allArr.push(arrData);
       representedSum += +data?.sum;
     });
     setDataList([...allArr]);
+    console.log('allArr: ', allArr);
     setRepresSum(representedSum.toFixed(2));
     return allArr;
 };

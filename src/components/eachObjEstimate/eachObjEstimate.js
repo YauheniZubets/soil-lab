@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { price } from '../../base-data/price';
+import { price, factorsMonth2025, factorsMonth2026, factorByChoosedMonth } from '../../base-data/price';
 import { db } from "../firebase/init";
 import { doc, getDoc, query, collection } from "firebase/firestore";
 import * as ExcelJS from 'exceljs';
@@ -251,7 +251,9 @@ export const EachObjEstimate = (props) => {
       worksheet.mergeCells('D24:F24');
       worksheet.getCell('B24').alignment = { wrapText: true };
       worksheet.getCell('D24').alignment = { wrapText: true };
-      row7.getCell(4).value = `${summa2017} * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.0076`;
+      const estimateMonth = dateFired.getMonth();
+      const currentFactor = factorByChoosedMonth(factorsMonth2026, estimateMonth); // текущий коэффициент
+      row7.getCell(4).value = `${summa2017} * 1.0821 * 1.0655 * 1.0757 * 1.0826 * 1.1295 * 1.1069 * 1.1402 * 1.1735 * ${currentFactor ? currentFactor : ''}`;
       row7.getCell(7).value = sumRes;
       row7.font = {
         name: 'Times New Roman',
