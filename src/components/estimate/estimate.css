@@ -1,12 +1,6 @@
 .table-brd {
     position: relative
 }
-.estimate-table {
-    border: 2px solid;
-    width: 100%;
-    margin: 0 auto;
-    display: block;
-}
 .estimate-table td {
     border: 1px solid;
     font-size: 12px;
