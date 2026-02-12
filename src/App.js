@@ -72,7 +72,6 @@ const gettingMainDataFromInp = (addingFile) => {
     
     headers.splice(1, 2, 'Влажность песчаных грунтов', 'Влажность глинистых грунтов', 'Плотность песчаных грунтов', 'Плотность глинистых грунтов');
     dispatch(setHeaders(headers));
-    console.log('headers: ', headers);
     // setHeaders(headers); //сделан дубликат в редакс это потом удалить
     
     const main_rows = sheetData.slice(9);

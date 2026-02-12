@@ -42,7 +42,6 @@
 .container-buttons div {
     display: inline-block;
     zoom: 1;
-    vertical-align: top;
 }
 .objects-list-month-estimate {
     display: inline-block;

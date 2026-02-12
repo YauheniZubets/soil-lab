@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { WordProt } from "../word-prot/wordProt";
 import { EachObjEstimate } from "../eachObjEstimate/eachObjEstimate";
 import { ComplexEstimate } from "../complexEstimate/complexEstimate";
+import { DeleteObj } from "../deleteObj/deleteObj";
 import { db } from "../firebase/init";
 import { getDocs, query, collection, where, getDoc, doc, limit, startAfter } from "firebase/firestore";
 import { EstimateTable } from "../estimate-table/EstimateTable";
@@ -49,7 +50,9 @@ export const ObjectsList = () => {
           allArr.push(arrData);
           representedSum += +data?.sum;
         });
+        allArr.sort((a, b) => a[0] - b[0]);
         setDataList([...allArr]);
+        console.log('allArr: ', allArr);
         setRepresSum(representedSum.toFixed(2));
         return allArr;
     };
@@ -118,6 +121,7 @@ export const ObjectsList = () => {
                         <div className="objects-list-obj" value={i[0]}>
                             <EachObjEstimate protName={i[0]} protYear={i[2]?.getFullYear()}/>
                         </div>
+                        <DeleteObj prot={i[0]} choosedYear={choosedYear}/>
                     </div>
                     {showTable && clickedProt === String(i[0]) && <div><EstimateTable clickedProt={clickedProt} choosedYear={choosedYear} /></div>}
                 </div>

@@ -1,0 +1,10 @@
+.DeleteObj-overlaw:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+.DeleteObj-overlaw {
+    margin: auto 2px auto 2px;
+    height: 26px;
+    display: inline-block;
+  vertical-align: middle;
+}

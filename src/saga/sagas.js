@@ -12,8 +12,8 @@ import { price, factorsMonth2026, factorByChoosedMonth } from '../base-data/pric
 const writeSumInFire = async (year, protFromRed, codeFromRed, date, sumFromWork, sumComputed, summa2017, sumRes, waterData, allQuan) => {
   try {
       await setDoc(doc(db, `${year}`, String(protFromRed)), {
-          protocol: protFromRed,
-          code: codeFromRed,
+          protocol: +protFromRed,
+          code: codeFromRed || '-',
           date: date,
           sumFromWork: +sumFromWork, // сумма по испытаниям
           sumComputed: +sumComputed, // сумма с ком услугами
