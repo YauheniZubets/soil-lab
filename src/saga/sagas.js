@@ -22,8 +22,10 @@ const writeSumInFire = async (year, protFromRed, codeFromRed, date, sumFromWork,
           waterData: waterData, // инфа по воде
           allQuan: allQuan
       });
+      return true
   } catch (e) {
       console.error("Error adding document: ", e);
+      return false
   }
 };
 
@@ -44,7 +46,7 @@ const getDateFromRed = state => state.dateWorking;
 const getWaterFromRed = state => state.waterData;
 const getAllQuanFromRed = state => state.allQuan;
 
-function* addObjectSaga() {
+export function* addObjectSaga() {
     const protocolFromRed = yield select(getProtocolFromRed);
     const codeFromRed = yield select(getCodeFromRed);
     const dateFromRed = yield select(getDateFromRed);
@@ -80,6 +82,3 @@ function* addObjectSaga() {
     }
 }
 
-export function* rootSaga() {
-  yield takeEvery(ADD_OBJECT_REQUESTED, addObjectSaga);
-}

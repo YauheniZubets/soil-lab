@@ -52,7 +52,6 @@ export const ObjectsList = () => {
         });
         allArr.sort((a, b) => a[0] - b[0]);
         setDataList([...allArr]);
-        console.log('allArr: ', allArr);
         setRepresSum(representedSum.toFixed(2));
         return allArr;
     };
@@ -104,7 +103,7 @@ export const ObjectsList = () => {
         if (pageFromPagination !== page) setPage(pageFromPagination);
     }
 
-    const itemsPerPage = 10;
+    const itemsPerPage = 20;
     const indexOfLast = page * itemsPerPage;
     const indexOfFirst = indexOfLast - itemsPerPage;
     const dataListShow = dataList.map( (i, ind) => {

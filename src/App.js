@@ -49,14 +49,15 @@ function sortAllStatment (allNumbes, arr) { //подсчет кол-ва в ве
     if (el[17] === '+') arr[12] +=1;
   });
   return arr;
-  // setQuantity([...arr]);
 };
+
 const gettingMainDataFromInp = (addingFile) => {
   const protocolName = parseInt(addingFile?.name.split(' ')[0]); //получаем номер протокола в формате ХХХ
   dispatch(setNewProtocol(protocolName));
+  
   const reader = new FileReader();
   reader.readAsArrayBuffer(addingFile);
-  reader.onload = async (e) => {
+  reader.onload = (e) => {
     const workbook = XLSX.read(e.target.result, {type: 'binary'});
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
@@ -76,6 +77,7 @@ const gettingMainDataFromInp = (addingFile) => {
     
     const main_rows = sheetData.slice(9);
     const usefulNumbers = number_rows(main_rows);
+    
     dispatch(setMainData(usefulNumbers));
     // setQuantity(sortAllStatment(usefulNumbers)); //добавляем в массив количества всех показателей
     const sheetName1 = workbook.SheetNames[1];
@@ -102,22 +104,42 @@ const gettingMainDataFromInp = (addingFile) => {
     dispatch(setAllQuan([...sortAllStatment(usefulNumbers), usefulNumbers1.length, usefulNumbers2.length, usefulNumbers3.length]));
 
     headers.length > 0 && dispatch(setEstimateStatus(true)); //если есть массив то включаем estimate
-
-    dispatch(addObjectRequested()); // вместо компонента estimate
+    
   };
 };
 
+const loadingObjectProcess = async (files) => { // последовательная загрузка нескольких файлов
+  try {
+    for (let i = 0; i < files.length; i++) {
+      await  new Promise((res) => {
+        gettingMainDataFromInp(files[i]);
+        setTimeout(()=>res(), 1000);
+      });
+      await new Promise((res) => {
+        dispatch(addObjectRequested());
+        setTimeout(()=>res(), 1000);
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-const cbLoad = e => {
-  const file = e.target.files[0];
-  gettingMainDataFromInp(file);
+const cbLoad = async e => {
+  const files = e.target.files;
+  if (files.length > 5) {
+    alert("Не более 5 файлов!");
+    e.preventDefault();
+  } else {
+    await loadingObjectProcess(files);
+  }
   e.target.value = '';
 }
 
   return (
     <div className="App">
       {loadStatus.isLoading && <Preloader />}
-      <input  type='file' onChange={cbLoad} />
+      <input  type='file' multiple onChange={cbLoad} />
       {/* {
         estimateStatus.estimateStatus && <Estimate />
       } */}
