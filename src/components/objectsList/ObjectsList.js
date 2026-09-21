@@ -16,7 +16,7 @@ export const ObjectsList = () => {
     const [dataList, setDataList] = useState([]);
     const [waterData, setWaterData] = useState([]);
     const [choosedYear, setChoosedYear] = useState('2026');
-    const [choosedMonth, setChoosedMonth] = useState('all');
+    const [choosedMonth, setChoosedMonth] = useState(new Date().getMonth());
     const [represSum, setRepresSum] = useState(0);
     const [showTable, setShowTable] = useState(false);
     const [clickedProt, setClickedProt] = useState('');
@@ -50,7 +50,7 @@ export const ObjectsList = () => {
           allArr.push(arrData);
           representedSum += +data?.sum;
         });
-        allArr.sort((a, b) => a[0] - b[0]);
+        allArr.sort((a, b) => b[0] - a[0]);
         setDataList([...allArr]);
         setRepresSum(representedSum.toFixed(2));
         return allArr;
@@ -170,9 +170,13 @@ export const ObjectsList = () => {
                 </div>
                 {dataListShow}
             </div>
-            <div className="Pagination">
-                <PaginationRounded pageFunc={changePage} itemsPerPage={itemsPerPage} totalItems={dataList.length || 10} />
-            </div>
+            {
+                dataList.length > 5 &&
+                <div className="Pagination">
+                    <PaginationRounded pageFunc={changePage} itemsPerPage={itemsPerPage} totalItems={dataList.length || 10} />
+                </div>
+            }
+            
         </div>
         
     )
